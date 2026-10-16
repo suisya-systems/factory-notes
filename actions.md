@@ -9,6 +9,6 @@
 | [rondo#715](https://github.com/suisya-systems/rondo/issues/715) | 実行記録の読み取りを continuo 経由にする | Issue は open | 2026-10-17 |
 | [claude-org-ja PR #1166](https://github.com/suisya-systems/claude-org-ja/pull/1166) | Codex レビューの回数上限をワーカーの外で守らせる。ワーカーの既定モデルを Sonnet にする。マージ先は近代化の作業ブランチ | PR は open、CI 成功、マージ判断待ち | 2026-10-17 |
 | 最小の L5 の試作 | 小さな練習用アプリで、仕様と隠しシナリオ → 作る → 隠しシナリオで判定 → 出荷、を 1 周回す | 提案のみ、未着手（[decisions.md](decisions.md)） | 2026-10-17 |
-| [design/grand-design.md](design/grand-design.md) | L5 工場の骨組みだけの全体設計を書く。要判断 2 件（判定の形、本番シグナルが人の承認を通るか） | 草稿、オーナーの判断待ち | 2026-10-17 |
+| [design/grand-design.md](design/grand-design.md) | L5 工場の骨組みだけの全体設計を書く。要判断 2 件（判定の形、本番シグナルが人の承認を通るか） | 要判断 2 件はオーナーが決定済み（[decisions.md](decisions.md)） | 2026-10-17 |
 
 背景: 上の 3 件は、Claude の呼び出しを Agent SDK に差し替える前に直すもの（[research/adapter-boundary-audit-2026-10-17.md](research/adapter-boundary-audit-2026-10-17.md)）。
