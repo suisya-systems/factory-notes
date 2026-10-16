@@ -13,6 +13,7 @@ L5 は、仕様を入れると動くソフトウェアが出てくる状態を�
 - `README.md`: このファイル。全体の説明と目次。
 - `decisions.md`: 決めたことを日付順に並べた記録。何を決めたか、なぜか、まだ決めていないことは何か。
 - `actions.md`: 起こした行動（Issue や PR）と、その状態の一覧。
+- `design/`: 工場の設計。
 - `research/`: 調べた結果。1 回の調査で 1 ファイル。ファイル名の末尾に調査日を付ける。
 
 事実には出典を同じ箇所に書く。出典は URL か、`repo:path:line` の形のコード位置。
@@ -24,3 +25,4 @@ L5 は、仕様を入れると動くソフトウェアが出てくる状態を�
 - [research/software-factory-landscape.md](research/software-factory-landscape.md): 「ソフトウェア工場」という言葉の使われ方と、世の中の到達点
 - [research/l5-gap-audit-2026-10-17.md](research/l5-gap-audit-2026-10-17.md): 手元の開発スタックが L5 からどれだけ遠いか
 - [research/adapter-boundary-audit-2026-10-17.md](research/adapter-boundary-audit-2026-10-17.md): `claude -p` 固有の作りが、差し替え用の部品の外に漏れていないか
+- [design/grand-design.md](design/grand-design.md): L5 工場の全体設計（骨組みだけ。後から変えにくい線と要判断）
