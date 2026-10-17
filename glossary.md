@@ -2,7 +2,7 @@
 
 このリポジトリの文書に出てくる言葉と、手元の開発スタックの言葉をまとめる。各文書は初出でここへリンクする。
 
-出典の書き方: `repo:path:line` はそのリポジトリの既定ブランチ上の位置。`rondo:DECISIONS.md` などは各リポジトリの決定記録。読んだ版は rondo 0dbda6c / continuo e74526e / cadenza 9b498a7。
+出典の書き方: `repo:path:line` はそのリポジトリの既定ブランチ上の位置。`rondo:DECISIONS.md` などは各リポジトリの決定記録。読んだコミットは rondo 0dbda6c / continuo e74526e / cadenza 9b498a7。
 
 ## 人と仕組み
 
