@@ -4,7 +4,7 @@
 
 - 判定役のブラウザ実行には **Playwright のライブラリ（Chromium のヘッドレス版）を直接使う**のを推す。手順を「役割（role）と名前で要素を探す → 操作する → 見え方を確かめる」の JSON で書き、判定役が自前のランナーでモデルを呼ばずに再生する。
 - 理由は 3 つ。役割と名前で要素を探す API（`getByRole` など）があり、シナリオの下書き役が実装を見ずに名前と形だけで手順を書ける。手元で動き、クラウドが要らない。Node と TypeScript のライブラリで、工場のコードから直接呼べる。
-- browser-use は自然文の指示をモデルが操作に変える作りで、判定役の「決定的テスト + LLM 判定 1 回」には合わない。Stagehand は固定の操作をモデルなしで実行できるが、その操作は成果物に対する `observe` から得る前提で、成果物を見られない下書き役の手順には合わない。Playwright MCP、Chrome DevTools MCP、agent-browser はモデルなしでも呼べるが、工場からは MCP クライアントや別プロセスの CLI を挟むことになり、Playwright を直接呼ぶより遠回りになる。
+- browser-use は自然文の指示をモデルが操作に変える作りで、判定役の「決定的テスト + LLM 判定 1 回」には合わない。Stagehand は固定の操作（Action）をモデルなしで実行できるが、要素は XPath や CSS のセレクタで指すので、役割と名前で手順を書く工場には `getByRole` を直接使える Playwright の方が合う。Playwright MCP、Chrome DevTools MCP、agent-browser はモデルなしでも呼べるが、工場からは MCP クライアントや別プロセスの CLI を挟むことになり、Playwright を直接呼ぶより遠回りになる。
 - Browserbase、Cloudflare Browser Run はクラウドで動くので除外。Lightpanda は軽いが、描画をしないエンジンで Chrome と同じ挙動の保証がないので、判定には使わない。
 
 ## 比較表
@@ -19,7 +19,7 @@
 | Chrome DevTools MCP | MCP サーバー（デバッグ・性能向け） | 要らないが、操作先の uid は snapshot ごとに取り直す | 動くが、既定で利用統計を送る | 手順ではなく、a11y ツリーの uid で操作 | Apache-2.0 | TypeScript |
 | Vercel agent-browser | エージェント向け CLI | 要らない（`find role` などを直接呼べる） | 動く | 書ける（`find role` / `find label`） | Apache-2.0 | Rust |
 | browser-use | エージェント | 要る | ブラウザは手元可、モデルは要る | 自然文の指示 | MIT | Python 中心 |
-| Stagehand | エージェント向けライブラリ | 自然文の `act` は要る。`observe` で得た Action の実行は要らない | 動く（Chrome が必要） | 自然文の指示 | MIT | TypeScript ほか |
+| Stagehand | エージェント向けライブラリ | 自然文の `act` は要る。Action（セレクタ指定）の実行は要らない | 動く（Chrome が必要） | 自然文の指示 | MIT | TypeScript ほか |
 | Steel Browser | セッション管理つきブラウザ API | 要らない（中は Chrome） | Docker で動く | 中で使う Playwright 等による | Apache-2.0 | TypeScript |
 | Lightpanda | 独自エンジン（描画なし） | 要らない | 動く | AX ツリーは取れる | AGPL-3.0 | Zig |
 | Browserbase | クラウドのブラウザ | — | 動かない（クラウドのみ） | — | 有料サービス | — |
@@ -67,7 +67,7 @@
 
 - MIT。TypeScript・Python・Go。`act`・`observe`・`extract` を自然文で指示する。手元の Chrome で動き、Browserbase は任意（https://github.com/browserbase/stagehand 、2026-10-17 に見た README。Go の導入例は v4.0.0）。
 - v3 の文書では、`cacheDir` を指定すると、操作の結果をファイルに保存し、次回から LLM を呼ばずに再生する（https://docs.stagehand.dev/v3/best-practices/caching ）。ただし、どの場合にキャッシュが外れるかは手元キャッシュについては書かれていない（同ページ）。外れると LLM が呼ばれるので、判定の決定性は保証されない。
-- v3 の `act` には Action を渡す形があり、文書は「Deterministic (no LLM)」としている。Action は `observe` の結果を渡す使い方が例に出ている（https://docs.stagehand.dev/v3/references/act ）。ただし `observe` は成果物を見て動くので、成果物を見られない下書き役（grand-design 2 章）は使えない。役割と名前から手順を書くなら Playwright を直接使う方が近い。
+- v3 の `act` には Action を渡す形があり、文書は「Deterministic (no LLM)」としている。Action は `selector`・`description`・`method`・`arguments` を持ち、`selector` は「XPath, CSS selector, etc.」で要素を指す（https://docs.stagehand.dev/v3/references/act ）。役割と名前から手順を書くなら、`getByRole` を直接使える Playwright の方が近い。
 
 ### Steel Browser
 
