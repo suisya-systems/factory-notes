@@ -21,7 +21,7 @@
 | [article-outline.md](article-outline.md) | オーナーの記事の骨組み | factory-notes の PR #14 / #15 で追加・修正済み | 2026-10-18 |
 | [suisya-systems/factory Issue #4](https://github.com/suisya-systems/factory/issues/4) | 判定役で画面（ブラウザ）の E2E シナリオを扱う。道具は Playwright のライブラリを直接使う方向（[research/headless-browsers-for-judge.md](research/headless-browsers-for-judge.md)） | Issue は open、実装は未着手 | 2026-10-18 |
 | [design/grand-design.md](design/grand-design.md) | L5 工場の骨組みだけの全体設計を書く。要判断 2 件（判定の形、本番シグナルが人の承認を通るか） | 要判断 2 件はオーナーが決定済み（[decisions.md](decisions.md)）。7 章（置き場所と仕様リポジトリ、振る舞いを変える変更）を、オーナーと合意した方向として追記 | 2026-10-18 |
-| 公開の準備 | 関連リポジトリを公開する前に、全履歴で秘密情報を点検する。公開の切替はオーナーの最終確認後（[decisions.md](decisions.md)） | 4 リポジトリの全履歴点検を実施し、手元の絶対パスと勤務先メールを全履歴から書き換えて強制 push 済み。公開の切替は未了 | 2026-10-18 |
+| 公開の準備 | 関連リポジトリを公開する前に、全履歴で秘密情報を点検する。公開の切替はオーナーの最終確認後（[decisions.md](decisions.md)） | 4 リポジトリの全履歴点検を実施し、手元の絶対パスと勤務先メールを全履歴から書き換えて強制 push 済み。オーナーが 4 リポジトリ（factory / factory-notes / factory-practice-memo / factory-practice-split）を公開に切り替えた（gh で PUBLIC を確認済み）。完了 | 2026-10-18 |
 | オーナーの記事 | オーナーが記事を書く | 2026-10-25 の予定 | 2026-10-18 |
 
 背景: continuo#275 / rondo#714 / rondo#715 の 3 件は、Claude の呼び出しを Agent SDK に差し替える前に直すもの（[research/adapter-boundary-audit-2026-10-17.md](research/adapter-boundary-audit-2026-10-17.md)）。
