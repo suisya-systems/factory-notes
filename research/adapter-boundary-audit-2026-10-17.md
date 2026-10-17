@@ -6,7 +6,7 @@
 
 差し替えが 1 か所で済むには、`claude -p` 固有の作り（コマンドの引数、出力の形、セッションファイルの置き場所）がアダプタの外で使われていてはいけない。それを手元の開発スタックの 3 つのリポジトリ（rondo / continuo / cadenza。[用語集](../glossary.md#人と仕組み)）で調べた。
 
-読んだ版: continuo e74526e / rondo 0dbda6c / cadenza 9b498a7。
+読んだコミット: continuo e74526e / rondo 0dbda6c / cadenza 9b498a7。
 
 ## 結論
 
