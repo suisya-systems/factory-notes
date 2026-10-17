@@ -1,0 +1,42 @@
+{
+ "id": "hard-1",
+ "declared": {
+  "rem": "listrot",
+  "net": "pairwise",
+  "payer": "listed",
+  "order": "oldest",
+  "minMembers": "2",
+  "emptyBen": "everyone"
+ },
+ "failOnDeclared": [],
+ "revert": {
+  "rem": {
+   "offsetting-expenses-settle-to-net": "step 4: response body did not match expected subset"
+  },
+  "net": {
+   "pairwise-chain-not-routed": "step 4: expected length 2 at transfers, got 1",
+   "pairwise-cycle-not-cancelled": "step 5: expected length 3 at transfers, got 0"
+  },
+  "emptyBen": {
+   "empty-beneficiaries-means-everyone": "step 2: expected status 200|201, got 400"
+  },
+  "minMembers": {
+   "single-member-group-rejected": "step 1: expected status 400|422, got 201"
+  }
+ },
+ "only": {
+  "rem": [
+   "offsetting-expenses-settle-to-net"
+  ],
+  "net": [
+   "pairwise-chain-not-routed",
+   "pairwise-cycle-not-cancelled"
+  ],
+  "emptyBen": [
+   "empty-beneficiaries-means-everyone"
+  ],
+  "minMembers": [
+   "single-member-group-rejected"
+  ]
+ }
+}
