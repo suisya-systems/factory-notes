@@ -4,7 +4,7 @@
 
 - 判定役のブラウザ実行には **Playwright のライブラリ（Chromium のヘッドレス版）を直接使う**のを推す。手順を「役割（role）と名前で要素を探す → 操作する → 見え方を確かめる」の JSON で書き、判定役が自前のランナーでモデルを呼ばずに再生する。
 - 理由は 3 つ。役割と名前で要素を探す API（`getByRole` など）があり、シナリオの下書き役が実装を見ずに名前と形だけで手順を書ける。手元で動き、クラウドが要らない。Node と TypeScript のライブラリで、工場のコードから直接呼べる。
-- browser-use と Stagehand は自然文の指示をモデルが操作に変える作りで、判定役の「決定的テスト + LLM 判定 1 回」には合わない。Playwright MCP、Chrome DevTools MCP、agent-browser はモデルなしでも呼べるが、工場からは MCP クライアントや別プロセスの CLI を挟むことになり、Playwright を直接呼ぶより遠回りになる。
+- browser-use は自然文の指示をモデルが操作に変える作りで、判定役の「決定的テスト + LLM 判定 1 回」には合わない。Stagehand は固定の操作をモデルなしで実行できるが、その操作は成果物に対する `observe` から得る前提で、成果物を見られない下書き役の手順には合わない。Playwright MCP、Chrome DevTools MCP、agent-browser はモデルなしでも呼べるが、工場からは MCP クライアントや別プロセスの CLI を挟むことになり、Playwright を直接呼ぶより遠回りになる。
 - Browserbase、Cloudflare Browser Run はクラウドで動くので除外。Lightpanda は軽いが、描画をしないエンジンで Chrome と同じ挙動の保証がないので、判定には使わない。
 
 ## 比較表
@@ -15,11 +15,11 @@
 |---|---|---|---|---|---|---|
 | Playwright（ライブラリ） | ブラウザ操作ライブラリ | 要らない | 動く | 書ける（`getByRole`、aria snapshot） | Apache-2.0 | TypeScript |
 | Playwright MCP | MCP サーバー | 要らない（ツールを直接呼べば。MCP クライアントを挟む） | 動く | 書ける（アクセシビリティツリー） | Apache-2.0 | TypeScript |
-| Playwright Test Agents | テストを生成・修理するエージェント | 計画・生成・修理に要る | 動く | 生成されたテストは Playwright のテスト | Playwright に含まれる（`npx playwright init-agents`） | TypeScript |
+| Playwright Test Agents | テストを生成・修理するエージェント | 生成済みテストの実行には要らない。計画・生成・修理には要る | 動く | 生成されたテストは Playwright のテスト | Playwright に含まれる（`npx playwright init-agents`） | TypeScript |
 | Chrome DevTools MCP | MCP サーバー（デバッグ・性能向け） | 要らないが、操作先の uid は snapshot ごとに取り直す | 動くが、既定で利用統計を送る | 手順ではなく、a11y ツリーの uid で操作 | Apache-2.0 | TypeScript |
 | Vercel agent-browser | エージェント向け CLI | 要らない（`find role` などを直接呼べる） | 動く | 書ける（`find role` / `find label`） | Apache-2.0 | Rust |
 | browser-use | エージェント | 要る | ブラウザは手元可、モデルは要る | 自然文の指示 | MIT | Python 中心 |
-| Stagehand | エージェント向けライブラリ | 要る。キャッシュが当たれば呼ばない | 動く（Chrome が必要） | 自然文の指示 | MIT | TypeScript ほか |
+| Stagehand | エージェント向けライブラリ | 自然文の `act` は要る。`observe` で得た Action の実行は要らない | 動く（Chrome が必要） | 自然文の指示 | MIT | TypeScript ほか |
 | Steel Browser | セッション管理つきブラウザ API | 要らない（中は Chrome） | Docker で動く | 中で使う Playwright 等による | Apache-2.0 | TypeScript |
 | Lightpanda | 独自エンジン（描画なし） | 要らない | 動く | AX ツリーは取れる | AGPL-3.0 | Zig |
 | Browserbase | クラウドのブラウザ | — | 動かない（クラウドのみ） | — | 有料サービス | — |
@@ -32,7 +32,7 @@
 - ライセンスは Apache-2.0、主言語は TypeScript（https://github.com/microsoft/playwright ）。2026-10-14 に v1.64.1 が出ている（https://github.com/microsoft/playwright/releases ）。
 - 要素の探し方は「利用者に見える属性と明示的な約束、たとえば `page.getByRole()`」を優先するよう勧めている。CSS や XPath は DOM の構造や実装に結びつくとしている（https://playwright.dev/docs/locators ）。`getByRole` は ARIA の役割・属性・アクセシブルネームで要素を探す（https://playwright.dev/docs/api/class-locator ）。
 - aria snapshot は、ページのアクセシビリティツリーを YAML で表したもの。期待値は「制約」で、全部を書かなくてよい。名前は正規表現でも書ける（https://playwright.dev/docs/aria-snapshots ）。`toMatchAriaSnapshot()` は v1.49 で入った（https://playwright.dev/docs/release-notes ）。ライブラリ側の `locator.ariaSnapshot()` も v1.49 からで、文字列を返す（https://playwright.dev/docs/api/class-locator ）。
-- `toMatchAriaSnapshot()` などの確かめは Playwright Test の `expect` の機能。判定役は自前のランナーなので、確かめは `factory:src/scenario.ts` の `checkStep` と同じく自前で書く（要素の数・本文・状態をライブラリで読み、期待値と比べる）。
+- `toMatchAriaSnapshot()` などの確かめは Playwright Test の `expect` の機能。判定役は自前のランナーなので、確かめは `factory:src/scenario.ts` の `checkStep` と同じく自前で書く（要素の数・本文・状態をライブラリで読み、期待値と比べる）。画面は操作のあと非同期に変わるので、1 回読んで比べるだけでは合否がタイミングで揺れる。期待どおりになるまで期限付きで読み直し、期限を過ぎたら不通過にする。Playwright も、件数を確かめるなら不安定さを避けるため `toHaveCount` を使うよう勧めている（https://playwright.dev/docs/api/class-locator#locator-count ）。
 - ブラウザは `PLAYWRIGHT_BROWSERS_PATH` で置き場所を指定して入れられる。ヘッドレスだけなら `--only-shell` で headless shell だけを入れられる。Linux の依存は `npx playwright install-deps` で入れる（https://playwright.dev/docs/browsers ）。先に入れておけば、判定のときにネットワークは要らない（推測。試作で確かめる）。
 - `chromiumSandbox` は既定で `false`（https://playwright.dev/docs/api/class-browsertype ）。bwrap の中で Chromium を動かすなら、Chromium 自身の囲いではなく bwrap が境界になる。
 
@@ -56,7 +56,7 @@
 
 - Rust の CLI で、デーモンに Playwright や Node は要らない。Apache-2.0。`snapshot` がアクセシビリティツリーと参照（`@e2` など）を返し、参照で操作する。`find role button click --name "Submit"` のように役割と名前でも操作できる。`is visible` などの状態確認、snapshot の差分、`batch` での一括実行がある。クラウドのブラウザは選べるが必須ではない（https://github.com/vercel-labs/agent-browser ）。
 - 2026-10-13 に v0.39.1、2026-10-01 から 2026-10-13 の間に 3 版出ている（https://github.com/vercel-labs/agent-browser/releases ）。
-- CLI はモデルなしで呼べるので判定にも使えるが、工場からは別プロセスの CLI を 1 手ずつ呼ぶことになる。Node から Playwright を直接呼ぶ方が素直。
+- CLI はモデルなしで呼べ、`batch` で複数の操作を一度に流せるので判定にも使える。ただ工場からは別プロセスとの入出力とエラー処理が要る。Node から Playwright を直接呼ぶ方が素直。
 
 ### browser-use
 
@@ -67,6 +67,7 @@
 
 - MIT。TypeScript・Python・Go。`act`・`observe`・`extract` を自然文で指示する。手元の Chrome で動き、Browserbase は任意（https://github.com/browserbase/stagehand 、2026-10-17 に見た README。Go の導入例は v4.0.0）。
 - v3 の文書では、`cacheDir` を指定すると、操作の結果をファイルに保存し、次回から LLM を呼ばずに再生する（https://docs.stagehand.dev/v3/best-practices/caching ）。ただし、どの場合にキャッシュが外れるかは手元キャッシュについては書かれていない（同ページ）。外れると LLM が呼ばれるので、判定の決定性は保証されない。
+- v3 の `act` には Action を渡す形があり、文書は「Deterministic (no LLM)」としている。Action は `observe` の結果を渡す使い方が例に出ている（https://docs.stagehand.dev/v3/references/act ）。ただし `observe` は成果物を見て動くので、成果物を見られない下書き役（grand-design 2 章）は使えない。役割と名前から手順を書くなら Playwright を直接使う方が近い。
 
 ### Steel Browser
 
@@ -82,7 +83,7 @@
 ### Browserbase / Cloudflare Browser Run
 
 - Browserbase はクラウド前提で、オンプレミスでの提供はしないと書いている。無料枠は 1 ブラウザ時間（https://www.browserbase.com/pricing ）。
-- Cloudflare Browser Run は Cloudflare のネットワーク上でブラウザを動かす（https://developers.cloudflare.com/changelog/2026-04-15-br-rename/ ）。
+- Cloudflare Browser Run は Cloudflare のネットワーク上でブラウザを動かす（https://developers.cloudflare.com/changelog/post/2026-04-15-br-rename/ ）。
 - どちらも 127.0.0.1 の成果物に届かず、隠しシナリオを外へ出すことにもなるので除外。
 
 ## 工場に入れるときの形（案）
@@ -100,4 +101,5 @@
 - 外向きの通信をどう切るか。`factory:src/sandbox.ts` はアプリにホストのネットワークをそのまま使わせており、アプリ自身の外向き通信も止めていない。ブラウザだけ絞ってもアプリ経由の送信は残るので、アプリとブラウザを同じ隔離ネットワーク（loopback だけ）に入れ、判定役からブラウザを操作する経路をどう通すかを試す。Playwright の `page.route` は Service Worker が扱う要求とポップアップの最初の要求を捕まえない（https://playwright.dev/docs/api/class-page#page-route ）ので、補助にとどめる。
 - シナリオの下書き役が、役割と名前だけで、通る手順を書けるか。HTTP のときの名前の食い違い（`?tag` と `?tags`）と同じことが、ボタンの文言で起きないか。
 - 不通過の理由の要約（`feedbackFor`）に、画面の文言が漏れないか。値の漏れ検査（`factory:src/scenario.ts` の `validateScenarios`）を画面の名前と本文にも広げる必要がある。
+- 確かめの読み直しの期限をいくつにするか。短いと遅い成果物が落ち、長いと不通過のたびに待つ。
 - 1 シナリオあたりの時間。ブラウザの起動をシナリオごとにするか、使い回すか。
