@@ -44,7 +44,7 @@
 ### Playwright Test Agents
 
 - planner（テスト計画を Markdown で書く）、generator（計画を Playwright のテストファイルに変える）、healer（落ちたテストを直す）の 3 つ（https://playwright.dev/docs/test-agents ）。v1.56 で入った（https://playwright.dev/docs/release-notes ）。
-- planner は動くアプリを探索して計画を作る。工場では、シナリオの下書き役が成果物を見られないので、そのままは使えない。healer はテストを書き換えるので、承認後に版を固定するシナリオ（grand-design 3 章）とは相いれない。
+- planner は動くアプリを探索して計画を作る。工場では、シナリオの下書き役が成果物を見られないので、そのままは使えない。healer はテストを書き換えるので、承認後にバージョンを固定するシナリオ（grand-design 3 章）とは相いれない。
 
 ### Chrome DevTools MCP
 
