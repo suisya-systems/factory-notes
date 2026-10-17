@@ -43,3 +43,7 @@
 - twin: 外部サービスを模した偽物。その上で試すために立てる。
 - 下書き役・作る役・判定役・出荷役: 工場の 4 つの役割。[design/grand-design.md](design/grand-design.md) の 2 章で定義している。
 - 輪: 入口 → 作る → 確かめる → 出す → 本番を見る → 次の仕事、の 1 周。[design/grand-design.md](design/grand-design.md) の 1 章。
+- インタフェース: 仕様の下書き役がシナリオの下書き役へ渡す、名前と形だけのブロック。エンドポイント、パラメータ名、フィールド名などを含み、振る舞いの規則は含まない。[design/grand-design.md](design/grand-design.md) の 2 章。
+- 独立した分類: シナリオが仕様から読み取れるかを判定する手続き。仕様と既存コードだけを見た別セッションが各要求への応答を予測し、シナリオの期待値と機械的に照合する。[design/grand-design.md](design/grand-design.md) の 2 章。
+- 食い違い一覧: 入口の要約に載せる、仕様とシナリオが食い違うものの一覧。仕様と食い違うものと、仕様が決めていないことを求めるものの 2 部に分ける。[design/grand-design.md](design/grand-design.md) の 2 章。
+- 変更 id（memo-tags-1 など）: 試作で 1 回分の下書き（仕様とシナリオの組）に付ける名前。memo-tags-1 は 2 周目の最初の下書き（仮定の文を渡した形）、memo-tags-2 は仮定の文を渡さない形で出し直した下書き。結果は suisya-systems/factory の docs/lap-2-report.md にある。
