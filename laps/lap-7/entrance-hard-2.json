@@ -1,0 +1,46 @@
+{
+ "id": "hard-2",
+ "declared": {
+  "rem": "cursor",
+  "net": "pairwise",
+  "payer": "listed",
+  "order": "oldest",
+  "minMembers": "1",
+  "emptyBen": "others",
+  "dupBen": "count",
+  "dupNames": "reject"
+ },
+ "failOnDeclared": [],
+ "revert": {
+  "rem": {},
+  "net": {
+   "settlement-pays-the-actual-payer": "step 4: expected length 2 at transfers, got 1",
+   "settlement-cycle-is-not-collapsed": "step 5: expected length 3 at transfers, got 0"
+  },
+  "emptyBen": {
+   "omitted-beneficiaries-means-everyone-else": "step 2: expected status 200|201, got 400"
+  },
+  "dupBen": {
+   "repeated-beneficiary-takes-extra-share": "step 3: response body did not match expected subset"
+  },
+  "dupNames": {
+   "duplicate-member-names-rejected": "step 1: expected status 400|409|422, got 201"
+  }
+ },
+ "only": {
+  "rem": [],
+  "net": [
+   "settlement-pays-the-actual-payer",
+   "settlement-cycle-is-not-collapsed"
+  ],
+  "emptyBen": [
+   "omitted-beneficiaries-means-everyone-else"
+  ],
+  "dupBen": [
+   "repeated-beneficiary-takes-extra-share"
+  ],
+  "dupNames": [
+   "duplicate-member-names-rejected"
+  ]
+ }
+}
