@@ -1,0 +1,24 @@
+{
+  "note": "lap 7 pre-registration. minority = scenarios that pass on the reference app set to the declared answers (docs/lap-7/refapps/server.cjs), fail when one declared answer is reverted (entrance.ts), and fail in a majority of the 22 builds of this spec made without feedback (baseline.ts: 16 lap-5 replicates + the first attempt of the 6 lap-6 runs). points = each point's own scenarios (fail only when that point is reverted). Declared but not verified: hard-1 leftover yen by position (offsetting-expenses-settle-to-net fails in 11/22 only), hard-2 leftover yen by group cursor (no scenario tells it from the majority). The entrance condition 'at least 2 amount points' was not met by either set; the owner approved running them as they are after seeing this (2026-10-18). Lines: laps/lap-7/runbook.md.",
+  "approvedVersions": {
+    "hard-1": "af72cb29505c27cd30cda13fd0fec4db8dc8fb42ec52e96a193dbfd8cefb81b6",
+    "hard-2": "555cf48285be3b715b20eae7ff7991d94df95375e1bcd3097137539832d7707a"
+  },
+  "maxAttempts": 5,
+  "sets": {
+    "hard-1": {
+      "minority": ["single-member-group-rejected", "empty-beneficiaries-means-everyone", "pairwise-chain-not-routed", "pairwise-cycle-not-cancelled"],
+      "points": { "net": ["pairwise-chain-not-routed", "pairwise-cycle-not-cancelled"], "emptyBen": ["empty-beneficiaries-means-everyone"], "minMembers": ["single-member-group-rejected"] },
+      "arms": { "summaries": ["hard-1", "hard-1-b"], "bare": ["hard-1-bare-a", "hard-1-bare-b"] }
+    },
+    "hard-2": {
+      "minority": ["settlement-pays-the-actual-payer", "settlement-cycle-is-not-collapsed", "omitted-beneficiaries-means-everyone-else", "repeated-beneficiary-takes-extra-share", "duplicate-member-names-rejected"],
+      "points": { "net": ["settlement-pays-the-actual-payer", "settlement-cycle-is-not-collapsed"], "emptyBen": ["omitted-beneficiaries-means-everyone-else"], "dupBen": ["repeated-beneficiary-takes-extra-share"], "dupNames": ["duplicate-member-names-rejected"] },
+      "arms": { "summaries": ["hard-2", "hard-2-b"], "bare": ["hard-2-bare-a", "hard-2-bare-b"] }
+    }
+  },
+  "labels": {
+    "hard-1": { "net": { "amount": true, "direction": "directional" }, "emptyBen": { "amount": false, "direction": "directional" }, "minMembers": { "amount": false, "direction": "directional" } },
+    "hard-2": { "net": { "amount": true, "direction": "directional" }, "emptyBen": { "amount": false, "direction": "directional" }, "dupBen": { "amount": false, "direction": "directional" }, "dupNames": { "amount": false, "direction": "directional" } }
+  }
+}
