@@ -123,9 +123,7 @@ Shapiro は、ほとんどの人が 3 段階目で頭打ちになっていると
 
 | リンク先 | 中身 |
 |---|---|
-| [suisya-systems/factory](https://github.com/suisya-systems/factory)（非公開） | 工場の本体 |
-| [suisya-systems/factory-notes](https://github.com/suisya-systems/factory-notes)（非公開） | 調査と実験の記録。この骨組みの出典もここにある |
+| [suisya-systems/factory](https://github.com/suisya-systems/factory) | 工場の本体。公開済み |
+| [suisya-systems/factory-notes](https://github.com/suisya-systems/factory-notes) | 調査と実験の記録。この骨組みの出典もここにある。公開済み |
 | [rondo](https://github.com/suisya-systems/rondo) / [continuo](https://github.com/suisya-systems/continuo) / [cadenza](https://github.com/suisya-systems/cadenza) | 手元の開発スタック。公開済み |
 | [Dan Shapiro「The five levels」](https://www.danshapiro.com/blog/2026/01/the-five-levels-from-spicy-autocomplete-to-the-software-factory/) | 5 段階の出典 |
-
-非公開の 2 つは、公開してからリンクします。
