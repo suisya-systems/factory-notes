@@ -1,4 +1,4 @@
-// Lap 9 tools (no model call). The lap 8 analysis (docs/lap-8/arms.ts in feat/factory-16-cross-family-lap) per request,
+// Lap 9 tools (no model call). The lap 8 analysis (laps/lap-8/arms.ts in factory-notes) per request,
 // plus the undecided share U of each spec, the screen and the request-dependence rule. Rules: docs/lap-9/runbook.md.
 // --provenance <STATE> <id>...: the calls in draft-cost.json match the set's name <req>-<spec family><scenario family>-<k|p>.
 // --screen <screen.json> <STATE>: Q per request from <req>-cc-p (k builds x the cc-p and cx-p sets); which domains go on.
@@ -175,7 +175,8 @@ function screenMain(rule: ScreenRule, sd: string): number {
 }
 
 // ---- lap 9: the request-dependence rule ----
-export type ReqResult = { c: Contrasts; S: number | null; U: number | null; ceiling: boolean }
+// complete: every spec of the request has its k builds (a request cut short never enters the dependence rule).
+export type ReqResult = { c: Contrasts; S: number | null; U: number | null; ceiling: boolean; complete: boolean }
 export const sBar = (c: Contrasts) => (c.Ds_c.d === null || c.Ds_x.d === null ? null : round((c.Ds_c.d + c.Ds_x.d) / 2))
 export function dependence(byReq: Record<string, ReqResult>, pre: Pick<Prereg, 'u' | 'lines'>, key: 'S' | 'D' = 'S'): { verdict: string; domains: Record<string, number | null> } {
   const val = (r: ReqResult) => (key === 'S' ? r.S : r.c.D.d)
@@ -184,7 +185,7 @@ export function dependence(byReq: Record<string, ReqResult>, pre: Pick<Prereg, '
     const dv = domainOf(req); if (!dv) continue
     const L = byReq[`${dv[0]}-loose`], T = byReq[`${dv[0]}-strict`]
     if (!L || !T || dv[0] in domains) continue
-    const usable = !L.ceiling && !T.ceiling && L.U !== null && T.U !== null && L.U - T.U >= pre.u.manipPts && val(L) !== null && val(T) !== null
+    const usable = L.complete && T.complete && !L.ceiling && !T.ceiling && L.U !== null && T.U !== null && L.U - T.U >= pre.u.manipPts && val(L) !== null && val(T) !== null
     domains[dv[0]] = usable ? round(val(L)! - val(T)!) : null
   }
   const ds = Object.values(domains).filter((x): x is number => x !== null)
@@ -261,8 +262,8 @@ function report(pre: Prereg, sd: string, errorsFile?: string): string {
         lines.push(`| ${k} | ${r.c[k].d?.toFixed(1) ?? 'n/a'} | ${r.c[k].v} | ` + (c ? `${c.c[k].d?.toFixed(1) ?? 'n/a'} | ${c.c[k].v} | ` : '') + `${v} |`)
       }
       if (st === 'all') {
-        fin[req] = { c: merged, S: sBar(r.c), U, ceiling }
-        if (c) finCor[req] = { c: c.c, S: sBar(c.c), U, ceiling: Object.values(c.P).every((x) => x !== null && 100 * x >= pre.ceilingPct) }
+        fin[req] = { c: merged, S: sBar(r.c), U, ceiling, complete: r.complete }
+        if (c) finCor[req] = { c: c.c, S: sBar(c.c), U, ceiling: Object.values(c.P).every((x) => x !== null && 100 * x >= pre.ceilingPct), complete: c.complete }
       }
       lines.push('')
     }
@@ -310,7 +311,7 @@ function selfTest() {
     const z = { d: 0, v: '0' as Verdict }
     return { D: { d: D, v: '?' }, Ds_c: { d: dsc, v: '?' }, Ds_x: { d: dsx, v: '?' }, Dp_c: z, Dp_x: z }
   }
-  const rr = (dsc: number, dsx: number, u: number, ceiling = false, D = 0): ReqResult => { const c = con(dsc, dsx, D); return { c, S: sBar(c), U: u, ceiling } }
+  const rr = (dsc: number, dsx: number, u: number, ceiling = false, D = 0, complete = true): ReqResult => { const c = con(dsc, dsx, D); return { c, S: sBar(c), U: u, ceiling, complete } }
   assert.equal(sBar(con(5, 0)), 2.5)
   const P = { u: U, lines: L }
   assert.equal(dependence({ 'a-loose': rr(20, 10, 60), 'a-strict': rr(0, 0, 20), 'b-loose': rr(12, 10, 50), 'b-strict': rr(1, 0, 10) }, P).verdict, 'larger where the spec leaves more open')
@@ -320,6 +321,7 @@ function selfTest() {
   assert.equal(dependence({ 'a-loose': rr(0, 0, 60), 'a-strict': rr(10, 10, 20), 'b-loose': rr(0, 0, 50), 'b-strict': rr(12, 12, 10) }, P).verdict, 'larger where the spec leaves less open (reverse)')
   assert.match(dependence({ 'a-loose': rr(20, 10, 60), 'a-strict': rr(0, 0, 45), 'b-loose': rr(12, 10, 50), 'b-strict': rr(1, 0, 10) }, P).verdict, /fewer than 2/) // a: manipulation check fails (15 < 20)
   assert.match(dependence({ 'a-loose': rr(20, 10, 60, true), 'a-strict': rr(0, 0, 20), 'b-loose': rr(12, 10, 50), 'b-strict': rr(1, 0, 10) }, P).verdict, /fewer than 2/) // a: ceiling
+  assert.match(dependence({ 'a-loose': rr(20, 10, 60, false, 0, false), 'a-strict': rr(0, 0, 20), 'b-loose': rr(12, 10, 50), 'b-strict': rr(1, 0, 10) }, P).verdict, /fewer than 2/) // a-loose cut short (fewer than k builds)
   assert.equal(dependence({ 'a-loose': rr(0, 0, 60, false, 15), 'a-strict': rr(0, 0, 20, false, 0), 'b-loose': rr(0, 0, 50, false, 12), 'b-strict': rr(0, 0, 10, false, 1) }, P, 'D').verdict, 'larger where the spec leaves more open')
   // provenance: request names with '-', the screen's -p sets
   const claude = (role: string): Call => ({ role, requested: FAMILY.c, answered: FAMILY.c })
