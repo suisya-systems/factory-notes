@@ -1,0 +1,8 @@
+{
+  "note": "lap 9 screen rule, fixed at gate screen-specs (before any screen build). Per request R: Q = mean over the k builds of R-cc-p of the pass fractions on R-cc-p and on R-cx-p, averaged (both families' scenarios weigh the same); a set a build has no results for counts 0. R is at the ceiling when Q >= ceilingPct. At most maxRequests requests go on to the main runs (owner decision 2026-10-18: the top 4 requests off the ceiling). First whole domains (R = <domain>-loose / <domain>-strict, neither version at the ceiling), lowest mean Q of the two versions first, at most maxDomains; then, while fewer than maxRequests, single requests off the ceiling, lowest Q first. Ties: the order below. Only whole domains enter the dependence rule. The screen's drafts and builds are never used in the main analysis. Rules: laps/lap-9/runbook.md.",
+  "k": 4,
+  "ceilingPct": 90,
+  "maxDomains": 2,
+  "maxRequests": 4,
+  "requests": ["settle-shares-loose", "settle-shares-strict", "booking-loose", "booking-strict", "memo-sync-loose", "memo-sync-strict"]
+}
