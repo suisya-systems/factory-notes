@@ -136,7 +136,7 @@ export function undecidedShare(sets: Classified[][]): number | null {
   for (const cls of sets) for (const c of cls) for (const k of c.checks ?? []) if (!k.check.startsWith('status')) { n++; if (k.result === 'U') u++ }
   return n ? round(100 * u / n) : null
 }
-export const median = (xs: number[]) => { const s = [...xs].sort((a, b) => a - b), h = s.length >> 1; return s.length % 2 ? s[h] : (s[h - 1] + s[h]) / 2 }
+export const median = (xs: number[]) => { const s = [...xs].sort((a, b) => a - b), h = s.length >> 1; return s.length % 2 ? s[h] : round((s[h - 1] + s[h]) / 2) }
 export const uClass = (u: number, t: Prereg['u']) => (u >= t.manyPct ? 'many' : u < t.fewPct ? 'few' : 'middle')
 
 // ---- lap 9: the screen ----
@@ -148,7 +148,7 @@ export function screen(Q: Record<string, number>, maxDomains: number, maxRequest
   const reqs = Object.keys(Q), off = (r: string) => Q[r] < ceilingPct
   const byQ = (a: { q: number; i: number }, b: { q: number; i: number }) => a.q - b.q || a.i - b.i
   const doms = [...new Set(reqs.map((r) => domainOf(r)![0]))]
-  const domains = doms.map((d, i) => ({ d, i, q: (Q[`${d}-loose`] + Q[`${d}-strict`]) / 2 }))
+  const domains = doms.map((d, i) => ({ d, i, q: round((Q[`${d}-loose`] + Q[`${d}-strict`]) / 2) }))
     .filter((x) => off(`${x.d}-loose`) && off(`${x.d}-strict`)).sort(byQ).slice(0, maxDomains).map((x) => x.d)
   const requests = reqs.filter((r) => domains.includes(domainOf(r)![0]))
   const rest = reqs.map((r, i) => ({ r, i, q: Q[r] })).filter((x) => off(x.r) && !requests.includes(x.r)).sort(byQ)
@@ -185,7 +185,7 @@ export function dependence(byReq: Record<string, ReqResult>, pre: Pick<Prereg, '
     const dv = domainOf(req); if (!dv) continue
     const L = byReq[`${dv[0]}-loose`], T = byReq[`${dv[0]}-strict`]
     if (!L || !T || dv[0] in domains) continue
-    const usable = L.complete && T.complete && !L.ceiling && !T.ceiling && L.U !== null && T.U !== null && L.U - T.U >= pre.u.manipPts && val(L) !== null && val(T) !== null
+    const usable = L.complete && T.complete && !L.ceiling && !T.ceiling && L.U !== null && T.U !== null && round(L.U - T.U) >= pre.u.manipPts && val(L) !== null && val(T) !== null
     domains[dv[0]] = usable ? round(val(L)! - val(T)!) : null
   }
   const ds = Object.values(domains).filter((x): x is number => x !== null)
@@ -234,7 +234,7 @@ function unanimous(sd: string, pre: Prereg): string[] {
 
 // A request's ceiling: every set's P >= ceilingPct. The final verdict of a contrast is undecided when the raw or the
 // corrected figures are at the ceiling, or when raw and corrected disagree.
-export const atCeiling = (P: Record<string, number | null>, pct: number) => Object.values(P).every((x) => x !== null && 100 * x >= pct)
+export const atCeiling = (P: Record<string, number | null>, pct: number) => Object.values(P).every((x) => x !== null && round(100 * x) >= pct)
 export function finalVerdict(raw: Verdict, cor: Verdict | null, ceilingRaw: boolean, ceilingCor: boolean): Verdict {
   return ceilingRaw || ceilingCor || (cor !== null && cor !== raw) ? '?' : raw
 }
@@ -319,6 +319,9 @@ function selfTest() {
   assert.equal(finalVerdict('0', '0', true, false), '?')
   assert.equal(finalVerdict('+', '0', false, false), '?') // raw and corrected disagree
   assert.equal(finalVerdict('+', null, false, false), '+')
+  // float boundaries: a mean P that is 95 % up to float error is at the ceiling
+  assert.equal(100 * 0.9499999999999999 >= 95, false) // the trap
+  assert.equal(atCeiling({ a: 0.9499999999999999, b: 1 }, 95), true)
   // dependence
   const con = (dsc: number, dsx: number, D = 0): Contrasts => {
     const z = { d: 0, v: '0' as Verdict }
@@ -333,6 +336,9 @@ function selfTest() {
   assert.equal(dependence({ 'a-loose': rr(2, 0, 60), 'a-strict': rr(0, 0, 20), 'b-loose': rr(0, 0, 50), 'b-strict': rr(3, 3, 10) }, P).verdict, 'does not depend on how much the spec leaves open')
   assert.equal(dependence({ 'a-loose': rr(0, 0, 60), 'a-strict': rr(10, 10, 20), 'b-loose': rr(0, 0, 50), 'b-strict': rr(12, 12, 10) }, P).verdict, 'larger where the spec leaves less open (reverse)')
   assert.match(dependence({ 'a-loose': rr(20, 10, 60), 'a-strict': rr(0, 0, 45), 'b-loose': rr(12, 10, 50), 'b-strict': rr(1, 0, 10) }, P).verdict, /fewer than 2/) // a: manipulation check fails (15 < 20)
+  // float boundary: a U difference of exactly 20 points (32.3 - 12.3 = 19.999999999999996) passes the manipulation check
+  assert.equal(32.3 - 12.3 >= 20, false) // the trap
+  assert.equal(dependence({ 'a-loose': rr(20, 10, 32.3), 'a-strict': rr(0, 0, 12.3), 'b-loose': rr(12, 10, 50), 'b-strict': rr(1, 0, 10) }, P).verdict, 'larger where the spec leaves more open')
   assert.match(dependence({ 'a-loose': rr(20, 10, 60, true), 'a-strict': rr(0, 0, 20), 'b-loose': rr(12, 10, 50), 'b-strict': rr(1, 0, 10) }, P).verdict, /fewer than 2/) // a: ceiling
   assert.match(dependence({ 'a-loose': rr(20, 10, 60, false, 0, false), 'a-strict': rr(0, 0, 20), 'b-loose': rr(12, 10, 50), 'b-strict': rr(1, 0, 10) }, P).verdict, /fewer than 2/) // a-loose cut short (fewer than k builds)
   assert.equal(dependence({ 'a-loose': rr(0, 0, 60, false, 15), 'a-strict': rr(0, 0, 20, false, 0), 'b-loose': rr(0, 0, 50, false, 12), 'b-strict': rr(0, 0, 10, false, 1) }, P, 'D').verdict, 'larger where the spec leaves more open')
