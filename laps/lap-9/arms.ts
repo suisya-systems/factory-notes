@@ -19,8 +19,10 @@ export function provenance(id: string, cost: { calls?: Call[]; countedCalls?: nu
   if (!cost?.calls) return [`${id}: no per-call record (draft-cost.json missing or from before lap 8)`]
   const [, req, a, b, k] = m, bad: string[] = []
   const of = (role: string) => cost.calls!.filter((c) => c.role === role)
+  // A redrafted spec (r1, r2: same input, new name) is still the lineage's spec.
   const wantFrom = a === b ? null : `${req}-${a}${a}-${k}`
-  if ((cost.specFrom ?? null) !== wantFrom) bad.push(`${id}: spec from ${cost.specFrom ?? '(own draft)'}, expected ${wantFrom ?? '(own draft)'}`)
+  const from = cost.specFrom ?? null
+  if (wantFrom === null ? from !== null : !(from !== null && (from === wantFrom || new RegExp(`^${wantFrom}r\\d+$`).test(from)))) bad.push(`${id}: spec from ${cost.specFrom ?? '(own draft)'}, expected ${wantFrom ?? '(own draft)'}`)
   if (a === b && !of('spec-drafter').length) bad.push(`${id}: no spec-drafter call`)
   if (a !== b && of('spec-drafter').length) bad.push(`${id}: a reused spec, but the spec drafter was called`)
   if (!of('scenario-drafter').length) bad.push(`${id}: no scenario-drafter call`)
@@ -156,12 +158,15 @@ export function screen(Q: Record<string, number>, maxDomains: number, maxRequest
   return { domains, requests }
 }
 
+// The screen's own set of a request: the last redraft of <req>-cc-p in the vault (r2, r1, then the first draft).
+export const screenOwn = (req: string, inVault: (id: string) => boolean) => [`${req}-cc-pr2`, `${req}-cc-pr1`].find(inVault) ?? `${req}-cc-p`
+
 type ScreenRule = { k: number; ceilingPct: number; maxDomains: number; maxRequests: number; requests: string[] }
 function screenMain(rule: ScreenRule, sd: string): number {
   const Q: Record<string, number> = {}
   const lines = ['| request | builds | Q cc-p (%) | Q cx-p (%) | Q (%) | ceiling |', '|---|---|---|---|---|---|']
   for (const req of rule.requests) {
-    const own = `${req}-cc-p`, cross = `${req}-cx-p`, rs = reps(sd, own)
+    const own = screenOwn(req, (id) => existsSync(join(sd, 'vault', id))), cross = `${req}-cx-p`, rs = reps(sd, own)
     if (rs.length !== rule.k) { console.error(`screen: ${own} has ${rs.length} builds, the rule needs ${rule.k}`); return 1 }
     // A build without results for a set (it did not start) counts as failing all of that set's scenarios.
     const q = (id: string) => mean(rs.map((r) => { const xs = r.results[id] ?? []; return xs.length ? xs.filter((x) => x.pass).length / xs.length : 0 }))!
@@ -349,6 +354,15 @@ function selfTest() {
   assert.deepEqual(provenance('memo-sync-strict-xx-2r1', { calls: [codex('spec-drafter'), codex('scenario-drafter'), claude('classifier')], countedCalls: 2, specFrom: null }), [])
   assert.equal(provenance('booking-loose-xc-1', { calls: [claude('scenario-drafter'), claude('classifier')], countedCalls: 0, specFrom: 'booking-loose-cc-1' }).length, 1) // wrong lineage
   assert.equal(provenance('booking-loose-cx-1', { calls: [claude('scenario-drafter'), claude('classifier')], countedCalls: 0, specFrom: 'booking-loose-cc-1' }).length, 1) // wrong family
+  // redrafts: the lineage check and the screen's own set follow r1 / r2
+  assert.deepEqual(provenance('memo-sync-strict-cx-p', { calls: [codex('scenario-drafter'), claude('classifier')], countedCalls: 1, specFrom: 'memo-sync-strict-cc-pr1' }), [])
+  assert.deepEqual(provenance('settle-shares-loose-xc-1', { calls: [claude('scenario-drafter'), claude('classifier')], countedCalls: 0, specFrom: 'settle-shares-loose-xx-1r2' }), [])
+  assert.equal(provenance('settle-shares-loose-xc-1', { calls: [claude('scenario-drafter'), claude('classifier')], countedCalls: 0, specFrom: 'settle-shares-loose-xx-12' }).length, 1) // another lineage
+  assert.deepEqual(provenance('settle-shares-strict-cx-2', { calls: [codex('scenario-drafter'), claude('classifier')], countedCalls: 1, specFrom: 'settle-shares-strict-cc-2r2' }), [])
+  assert.deepEqual(provenance('settle-shares-strict-cc-2r2', { calls: [claude('spec-drafter'), claude('scenario-drafter'), claude('classifier')], countedCalls: 0, specFrom: null }), [])
+  assert.deepEqual(provenance('settle-shares-strict-xc-1r1', { calls: [claude('scenario-drafter'), claude('classifier')], countedCalls: 0, specFrom: 'settle-shares-strict-xx-1' }), [])
+  assert.equal(screenOwn('memo-sync-strict', (id) => id === 'memo-sync-strict-cc-pr1'), 'memo-sync-strict-cc-pr1')
+  assert.equal(screenOwn('booking-loose', () => false), 'booking-loose-cc-p')
   console.log('arms.ts self-test: ok')
 }
 

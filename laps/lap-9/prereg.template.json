@@ -2,30 +2,6 @@
   "note": "lap 9 pre-registration (template). At gate \"specs\" the requests of domains the screen left out are deleted; approvedVersions are filled at gate \"entrance\", before any main build. Rules: docs/lap-9/runbook.md. U = share of checks other than status codes the classifier left open (U), own + cross sets pooled per spec, median of the 4 specs per request; many >= manyPct, few < fewPct; a domain enters the dependence rule only when U(loose) - U(strict) >= manipPts and neither version is at the ceiling (every set P >= ceilingPct). Lines as lap 8. errors.json (after the runs) gives the corrected figures.",
   "k": 8,
   "requests": {
-    "settle-shares-loose": {
-      "pairs": [
-        {
-          "spec": "c",
-          "own": "settle-shares-loose-cc-1",
-          "cross": "settle-shares-loose-cx-1"
-        },
-        {
-          "spec": "x",
-          "own": "settle-shares-loose-xx-1",
-          "cross": "settle-shares-loose-xc-1"
-        },
-        {
-          "spec": "c",
-          "own": "settle-shares-loose-cc-2",
-          "cross": "settle-shares-loose-cx-2"
-        },
-        {
-          "spec": "x",
-          "own": "settle-shares-loose-xx-2",
-          "cross": "settle-shares-loose-xc-2"
-        }
-      ]
-    },
     "settle-shares-strict": {
       "pairs": [
         {
@@ -36,113 +12,17 @@
         {
           "spec": "x",
           "own": "settle-shares-strict-xx-1",
-          "cross": "settle-shares-strict-xc-1"
+          "cross": "settle-shares-strict-xc-1r1"
         },
         {
           "spec": "c",
-          "own": "settle-shares-strict-cc-2",
+          "own": "settle-shares-strict-cc-2r2",
           "cross": "settle-shares-strict-cx-2"
         },
         {
           "spec": "x",
           "own": "settle-shares-strict-xx-2",
           "cross": "settle-shares-strict-xc-2"
-        }
-      ]
-    },
-    "booking-loose": {
-      "pairs": [
-        {
-          "spec": "c",
-          "own": "booking-loose-cc-1",
-          "cross": "booking-loose-cx-1"
-        },
-        {
-          "spec": "x",
-          "own": "booking-loose-xx-1",
-          "cross": "booking-loose-xc-1"
-        },
-        {
-          "spec": "c",
-          "own": "booking-loose-cc-2",
-          "cross": "booking-loose-cx-2"
-        },
-        {
-          "spec": "x",
-          "own": "booking-loose-xx-2",
-          "cross": "booking-loose-xc-2"
-        }
-      ]
-    },
-    "booking-strict": {
-      "pairs": [
-        {
-          "spec": "c",
-          "own": "booking-strict-cc-1",
-          "cross": "booking-strict-cx-1"
-        },
-        {
-          "spec": "x",
-          "own": "booking-strict-xx-1",
-          "cross": "booking-strict-xc-1"
-        },
-        {
-          "spec": "c",
-          "own": "booking-strict-cc-2",
-          "cross": "booking-strict-cx-2"
-        },
-        {
-          "spec": "x",
-          "own": "booking-strict-xx-2",
-          "cross": "booking-strict-xc-2"
-        }
-      ]
-    },
-    "memo-sync-loose": {
-      "pairs": [
-        {
-          "spec": "c",
-          "own": "memo-sync-loose-cc-1",
-          "cross": "memo-sync-loose-cx-1"
-        },
-        {
-          "spec": "x",
-          "own": "memo-sync-loose-xx-1",
-          "cross": "memo-sync-loose-xc-1"
-        },
-        {
-          "spec": "c",
-          "own": "memo-sync-loose-cc-2",
-          "cross": "memo-sync-loose-cx-2"
-        },
-        {
-          "spec": "x",
-          "own": "memo-sync-loose-xx-2",
-          "cross": "memo-sync-loose-xc-2"
-        }
-      ]
-    },
-    "memo-sync-strict": {
-      "pairs": [
-        {
-          "spec": "c",
-          "own": "memo-sync-strict-cc-1",
-          "cross": "memo-sync-strict-cx-1"
-        },
-        {
-          "spec": "x",
-          "own": "memo-sync-strict-xx-1",
-          "cross": "memo-sync-strict-xc-1"
-        },
-        {
-          "spec": "c",
-          "own": "memo-sync-strict-cc-2",
-          "cross": "memo-sync-strict-cx-2"
-        },
-        {
-          "spec": "x",
-          "own": "memo-sync-strict-xx-2",
-          "cross": "memo-sync-strict-xc-2"
         }
       ]
     }

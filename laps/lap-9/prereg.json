@@ -1,0 +1,50 @@
+{
+  "note": "lap 9 pre-registration (template). At gate \"specs\" the requests of domains the screen left out are deleted; approvedVersions are filled at gate \"entrance\", before any main build. Rules: docs/lap-9/runbook.md. U = share of checks other than status codes the classifier left open (U), own + cross sets pooled per spec, median of the 4 specs per request; many >= manyPct, few < fewPct; a domain enters the dependence rule only when U(loose) - U(strict) >= manipPts and neither version is at the ceiling (every set P >= ceilingPct). Lines as lap 8. errors.json (after the runs) gives the corrected figures.",
+  "k": 8,
+  "requests": {
+    "settle-shares-strict": {
+      "pairs": [
+        {
+          "spec": "c",
+          "own": "settle-shares-strict-cc-1",
+          "cross": "settle-shares-strict-cx-1"
+        },
+        {
+          "spec": "x",
+          "own": "settle-shares-strict-xx-1",
+          "cross": "settle-shares-strict-xc-1r1"
+        },
+        {
+          "spec": "c",
+          "own": "settle-shares-strict-cc-2r2",
+          "cross": "settle-shares-strict-cx-2"
+        },
+        {
+          "spec": "x",
+          "own": "settle-shares-strict-xx-2",
+          "cross": "settle-shares-strict-xc-2"
+        }
+      ]
+    }
+  },
+  "approvedVersions": {
+    "settle-shares-strict-cc-1": "88bb7c54d1e8f0a05817de3bc87862d9aec55c993dec63d34aba6c897ea6593a",
+    "settle-shares-strict-cx-1": "0b169f3fae8cbc43b5fc604c5aa1a54eeacb2462d23841121d4b56cb8e1edde4",
+    "settle-shares-strict-xx-1": "515519a6403ddba27937502bded59c5aad27bf8ab26b2fa419bbbb17815e7dc8",
+    "settle-shares-strict-xc-1r1": "ad06b953e6cd1c22967ba3e72fce4283e41fb99a2a6226857142cc0076712680",
+    "settle-shares-strict-cc-2r2": "f2560332152ed076182c9d8cddffa0cf440b45da114eeed442e298ccf8ca6c87",
+    "settle-shares-strict-cx-2": "1532df13095a55dd8e3d0814259baa144a4cecb50e1ac597f6437cd8025048f4",
+    "settle-shares-strict-xx-2": "66beea4ac2138a787943f0d804864ab531f02c6fe89257fac1aeca5e0eba7142",
+    "settle-shares-strict-xc-2": "1a834901e4a852edd909eefcfa0438d356de343fad8c48dbae490e2768aed8a2"
+  },
+  "lines": {
+    "effectPts": 10,
+    "nullPts": 5
+  },
+  "u": {
+    "manyPct": 40,
+    "fewPct": 25,
+    "manipPts": 20
+  },
+  "ceilingPct": 95
+}
