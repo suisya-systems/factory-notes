@@ -1,0 +1,76 @@
+{
+  "note": "lap 8 pre-registration (template: approvedVersions are filled at the entrance gate, before any build). Lines and the attribution table: laps/lap-8/runbook.md. Scenario layers: spec = every check other than a status code is readable from the spec (classifier result M, basis spec; changed at the entrance, before any build); rest = everything else. errors.json (written after the runs, by the rule in the runbook) gives the corrected figures; raw and corrected disagreeing makes a contrast undecided.",
+  "k": 8,
+  "requests": {
+    "settle": {
+      "pairs": [
+        {
+          "spec": "c",
+          "own": "settle-cc-1",
+          "cross": "settle-cx-1r2"
+        },
+        {
+          "spec": "c",
+          "own": "settle-cc-2",
+          "cross": "settle-cx-2"
+        },
+        {
+          "spec": "x",
+          "own": "settle-xx-1",
+          "cross": "settle-xc-1"
+        },
+        {
+          "spec": "x",
+          "own": "settle-xx-2",
+          "cross": "settle-xc-2"
+        }
+      ]
+    },
+    "memo": {
+      "pairs": [
+        {
+          "spec": "c",
+          "own": "memo-cc-1",
+          "cross": "memo-cx-1"
+        },
+        {
+          "spec": "c",
+          "own": "memo-cc-2",
+          "cross": "memo-cx-2"
+        },
+        {
+          "spec": "x",
+          "own": "memo-xx-1",
+          "cross": "memo-xc-1"
+        },
+        {
+          "spec": "x",
+          "own": "memo-xx-2",
+          "cross": "memo-xc-2"
+        }
+      ]
+    }
+  },
+  "approvedVersions": {
+    "settle-cc-1": "46e988fe8a3ef8a41e14c85a83cfc800c80f31561dce3e578fc8ff1c6572247a",
+    "settle-cx-1r2": "3504ef157cdb91d25b9278e3cd3a99e8a343dd1ce15bac5ba357b7c139859652",
+    "settle-cc-2": "71c90fbd6599eb3bc1d230443c7f7a616678122b3b2a8af315c1b7dbefa9fd07",
+    "settle-cx-2": "9be1aeeac99cb8d2372b07d0363206d0a8f2348d6d3d7e3a6f060aecfe62e209",
+    "settle-xx-1": "eb95b39054211d6405548efb7fa3d0920d6be02f0400002590b8026afbd20a0d",
+    "settle-xc-1": "213459f6b6ca958ab78f7958a9da6628cb43450b9984fcd24a642436120d1b5f",
+    "settle-xx-2": "cd89628c25dfe8d69e4554c3099fa81f01fdfec41897c2f363052f51a519d86a",
+    "settle-xc-2": "a055860e31e893cc4b113e51e39c6620966f4811a572e5c750c38a74c352bcfc",
+    "memo-cc-1": "a8177c6e12943b30aa15be81aa5d0b29483e8dbaab15663a37ca57a4fe2b9dae",
+    "memo-cx-1": "2b58112effc85e9c16c8ee06caaf6b515a617c83613c1cf55b3e1ddc8dd3a162",
+    "memo-cc-2": "6dd1706edc49bf258f24ddf38b6b6f159ce4d0b10f68dd47e5c7d8396e7649b1",
+    "memo-cx-2": "c6698396ff3a52af0485c9730c40890615465e151005f0cfb5abeb236f2234bf",
+    "memo-xx-1": "75c6f42e03c94e520f3180cef375483d0542c90531b6964daf841c629d570671",
+    "memo-xc-1": "fbdda02db56007bcf1fce5a2a5477cc0609cb1d54c4b9cad1ae4f65c57aa4561",
+    "memo-xx-2": "936bf029a496bb032b78f4e16199db148c2625acbb885d4a7a96b451a329222f",
+    "memo-xc-2": "f7edadc00aab697bb7c77663cd2bf9f80679232ef8435a07d3117d67f8c5db26"
+  },
+  "lines": {
+    "effectPts": 10,
+    "nullPts": 5
+  }
+}
