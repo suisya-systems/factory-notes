@@ -232,6 +232,13 @@ function unanimous(sd: string, pre: Prereg): string[] {
   return out
 }
 
+// A request's ceiling: every set's P >= ceilingPct. The final verdict of a contrast is undecided when the raw or the
+// corrected figures are at the ceiling, or when raw and corrected disagree.
+export const atCeiling = (P: Record<string, number | null>, pct: number) => Object.values(P).every((x) => x !== null && 100 * x >= pct)
+export function finalVerdict(raw: Verdict, cor: Verdict | null, ceilingRaw: boolean, ceilingCor: boolean): Verdict {
+  return ceilingRaw || ceilingCor || (cor !== null && cor !== raw) ? '?' : raw
+}
+
 function report(pre: Prereg, sd: string, errorsFile?: string): string {
   for (const [id, v] of Object.entries(pre.approvedVersions)) {
     const a = join(sd, 'vault', id, 'approval.json')
@@ -250,20 +257,20 @@ function report(pre: Prereg, sd: string, errorsFile?: string): string {
     uRows.push(`| ${req} | ${us.map((x) => x?.toFixed(1) ?? 'n/a').join(', ')} | ${U?.toFixed(1) ?? 'n/a'} | ${U === null ? 'n/a' : uClass(U, pre.u)} |`)
     for (const st of ['all', 'spec', 'rest'] as Stratum[]) {
       const r = raw[req][st], c = cor?.[req][st]
-      const ceiling = Object.values(raw[req].all.P).every((x) => x !== null && 100 * x >= pre.ceilingPct)
-      lines.push(`## ${req}, scenarios: ${st}${r.complete ? '' : ' (INCOMPLETE: a spec has fewer than k builds)'}${ceiling ? ' (CEILING: every verdict undecided)' : ''}`, '',
+      const ceiling = atCeiling(raw[req].all.P, pre.ceilingPct), ceilingCor = cor ? atCeiling(cor[req].all.P, pre.ceilingPct) : false
+      lines.push(`## ${req}, scenarios: ${st}${r.complete ? '' : ' (INCOMPLETE: a spec has fewer than k builds)'}${ceiling || ceilingCor ? ` (CEILING${ceiling ? '' : ' in the corrected figures'}: every verdict undecided)` : ''}`, '',
         '| set | P raw (%) |' + (c ? ' P corrected (%) |' : ''), '|---|---|' + (c ? '---|' : ''))
       for (const id of Object.keys(r.P)) lines.push(`| ${id} | ${pts(r.P[id])} |` + (c ? ` ${pts(c.P[id])} |` : ''))
       lines.push('', '| contrast | raw d (pts) | raw | ' + (c ? 'corrected d | corrected | ' : '') + 'verdict |', '|---|---|---|' + (c ? '---|---|' : '') + '---|')
       const merged = {} as Contrasts
       for (const k of KEYS) {
-        const v = ceiling || (c && c.c[k].v !== r.c[k].v) ? '?' : r.c[k].v
+        const v = finalVerdict(r.c[k].v, c ? c.c[k].v : null, ceiling, ceilingCor)
         merged[k] = { d: r.c[k].d, v }
         lines.push(`| ${k} | ${r.c[k].d?.toFixed(1) ?? 'n/a'} | ${r.c[k].v} | ` + (c ? `${c.c[k].d?.toFixed(1) ?? 'n/a'} | ${c.c[k].v} | ` : '') + `${v} |`)
       }
       if (st === 'all') {
         fin[req] = { c: merged, S: sBar(r.c), U, ceiling, complete: r.complete }
-        if (c) finCor[req] = { c: c.c, S: sBar(c.c), U, ceiling: Object.values(c.P).every((x) => x !== null && 100 * x >= pre.ceilingPct), complete: c.complete }
+        if (c) finCor[req] = { c: c.c, S: sBar(c.c), U, ceiling: ceilingCor, complete: c.complete }
       }
       lines.push('')
     }
@@ -306,6 +313,12 @@ function selfTest() {
   assert.deepEqual(screen(Q6([60, 60, 60, 60, 60, 60]), 2, 4, 90).domains, ['a', 'b'])
   assert.deepEqual(screen(Q6([90, 80, 100, 55, 80, 80]), 2, 4, 90), { domains: ['c'], requests: ['c-loose', 'c-strict', 'b-strict', 'a-strict'] })
   assert.deepEqual(screen(Q6([95, 95, 95, 95, 95, 50]), 2, 4, 90), { domains: [], requests: ['c-strict'] })
+  // final verdict of a contrast: the corrected figures at the ceiling make it undecided too (lap 9 review)
+  assert.equal(atCeiling({ a: 0.96, b: 1 }, 95), true); assert.equal(atCeiling({ a: 0.94, b: 1 }, 95), false); assert.equal(atCeiling({ a: null }, 95), false)
+  assert.equal(finalVerdict('0', '0', false, true), '?') // raw off the ceiling, corrected on it
+  assert.equal(finalVerdict('0', '0', true, false), '?')
+  assert.equal(finalVerdict('+', '0', false, false), '?') // raw and corrected disagree
+  assert.equal(finalVerdict('+', null, false, false), '+')
   // dependence
   const con = (dsc: number, dsx: number, D = 0): Contrasts => {
     const z = { d: 0, v: '0' as Verdict }
