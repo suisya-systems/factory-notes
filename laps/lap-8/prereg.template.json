@@ -1,0 +1,59 @@
+{
+  "note": "lap 8 pre-registration (template: approvedVersions are filled at the entrance gate, before any build). Lines and the attribution table: laps/lap-8/runbook.md. Scenario layers: spec = every check other than a status code is readable from the spec (classifier result M, basis spec; changed at the entrance, before any build); rest = everything else. errors.json (written after the runs, by the rule in the runbook) gives the corrected figures; raw and corrected disagreeing makes a contrast undecided.",
+  "k": 8,
+  "requests": {
+    "settle": {
+      "pairs": [
+        {
+          "spec": "c",
+          "own": "settle-cc-1",
+          "cross": "settle-cx-1r2"
+        },
+        {
+          "spec": "c",
+          "own": "settle-cc-2",
+          "cross": "settle-cx-2"
+        },
+        {
+          "spec": "x",
+          "own": "settle-xx-1",
+          "cross": "settle-xc-1"
+        },
+        {
+          "spec": "x",
+          "own": "settle-xx-2",
+          "cross": "settle-xc-2"
+        }
+      ]
+    },
+    "memo": {
+      "pairs": [
+        {
+          "spec": "c",
+          "own": "memo-cc-1",
+          "cross": "memo-cx-1"
+        },
+        {
+          "spec": "c",
+          "own": "memo-cc-2",
+          "cross": "memo-cx-2"
+        },
+        {
+          "spec": "x",
+          "own": "memo-xx-1",
+          "cross": "memo-xc-1"
+        },
+        {
+          "spec": "x",
+          "own": "memo-xx-2",
+          "cross": "memo-xc-2"
+        }
+      ]
+    }
+  },
+  "approvedVersions": {},
+  "lines": {
+    "effectPts": 10,
+    "nullPts": 5
+  }
+}
