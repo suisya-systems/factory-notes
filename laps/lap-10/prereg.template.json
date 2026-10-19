@@ -1,0 +1,31 @@
+{
+  "note": "lap 10 pre-registration (template). At gate main the requests the screen left out are deleted; entrance.ts resolves each set to its last redraft and fills approvedVersions at gate entrance, before any main build. Rules: docs/lap-10/runbook.md. Lines as lap 8. A request is at the ceiling when every set P >= ceilingPct, at the floor when every set P <= floorPct (raw or corrected): its verdicts are undecided. The verdict across requests needs at least minRequests requests in the rule. errors.json (after the runs) gives the corrected figures.",
+  "k": 8,
+  "requests": {
+    "settle-history": { "pairs": [
+      { "spec": "c", "own": "settle-history-cc-1", "cross": "settle-history-cx-1" },
+      { "spec": "x", "own": "settle-history-xx-1", "cross": "settle-history-xc-1" },
+      { "spec": "c", "own": "settle-history-cc-2", "cross": "settle-history-cx-2" },
+      { "spec": "x", "own": "settle-history-xx-2", "cross": "settle-history-xc-2" } ] },
+    "stock-backorder": { "pairs": [
+      { "spec": "c", "own": "stock-backorder-cc-1", "cross": "stock-backorder-cx-1" },
+      { "spec": "x", "own": "stock-backorder-xx-1", "cross": "stock-backorder-xc-1" },
+      { "spec": "c", "own": "stock-backorder-cc-2", "cross": "stock-backorder-cx-2" },
+      { "spec": "x", "own": "stock-backorder-xx-2", "cross": "stock-backorder-xc-2" } ] },
+    "library-holds": { "pairs": [
+      { "spec": "c", "own": "library-holds-cc-1", "cross": "library-holds-cx-1" },
+      { "spec": "x", "own": "library-holds-xx-1", "cross": "library-holds-xc-1" },
+      { "spec": "c", "own": "library-holds-cc-2", "cross": "library-holds-cx-2" },
+      { "spec": "x", "own": "library-holds-xx-2", "cross": "library-holds-xc-2" } ] },
+    "task-deps": { "pairs": [
+      { "spec": "c", "own": "task-deps-cc-1", "cross": "task-deps-cx-1" },
+      { "spec": "x", "own": "task-deps-xx-1", "cross": "task-deps-xc-1" },
+      { "spec": "c", "own": "task-deps-cc-2", "cross": "task-deps-cx-2" },
+      { "spec": "x", "own": "task-deps-xx-2", "cross": "task-deps-xc-2" } ] }
+  },
+  "approvedVersions": {},
+  "lines": { "effectPts": 10, "nullPts": 5 },
+  "ceilingPct": 95,
+  "floorPct": 20,
+  "minRequests": 2
+}
