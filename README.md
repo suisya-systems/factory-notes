@@ -1,7 +1,6 @@
 # factory-notes
 
-ソフトウェア工場の「L5」を作るための調査と行動の記録を置くリポジトリ。非公開。
-
+ソフトウェア工場の「L5」を作るための調査と行動の記録を置くリポジトリ。
 ## 何を目指しているか
 
 L5 は、仕様を入れると動くソフトウェアが出てくる状態を指す。途中で人はコードを書かず、レビューも承認もしない。Dan Shapiro が 5 段階の自動化レベルの最上位として名付けた（https://www.danshapiro.com/blog/2026/01/the-five-levels-from-spicy-autocomplete-to-the-software-factory/ ）。
