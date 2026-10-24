@@ -2,18 +2,18 @@
 
 [runbook.md](runbook.md)「工場の側の確かめ」で挙げた 4 つの変更の、suisya-systems/factory に立てる Issue の草案。本文は英語（工場のリポジトリの方針）。
 
-作成担当の sandbox からは `gh` の設定（`~/.config/gh/hosts.yml`）が読めず、起票できなかった。起票は窓口に頼む。読んだのは工場の main 6194c56 である。A は、作成担当が手元の写しで `validateScenarios` を呼んで再現した（モデルは呼んでいない）。
+作成担当の sandbox からは `gh` が使えなかったので、この草案をもとに窓口が 2026-10-25 に起票した（factory#42〜#45）。読んだのは工場の main 6194c56 である。A は、作成担当が手元の写しで `validateScenarios` を呼んで再現した（モデルは呼んでいない）。
 
-| | 題 | 11 周目の前に |
-|---|---|---|
-| A | 偽物の段の枠のキーとメソッド名を、要約の検査が値として数える | 要る |
-| B | 承認の要約に、偽物の段の中身（設定する応答・確かめる要求）が出ない | 要る |
-| C | `replicate --score` で偽物を使う仕様を採点するテストが無い | 要る |
-| D | 偽物の段で落ちたとき、アプリが実際に送った要求が結果に残らない | 強く勧める |
+| | Issue | 題 | 11 周目の前に |
+|---|---|---|---|
+| A | factory#42 | 偽物の段の枠のキーとメソッド名を、要約の検査が値として数える | 要る |
+| B | factory#43 | 承認の要約に、偽物の段の中身（設定する応答・確かめる要求）が出ない | 要る |
+| C | factory#44 | `replicate --score` で偽物を使う仕様を採点するテストが無い | 要る |
+| D | factory#45 | 偽物の段で落ちたとき、アプリが実際に送った要求が結果に残らない | 強く勧める |
 
 ---
 
-## A
+## A（factory#42）
 
 **Title**: Scenario summary check rejects the fake's control envelope (method, path, status, json, headers) as scenario values
 
@@ -39,7 +39,7 @@ Why it matters for lap 11: each false rejection costs a repair round or a redraf
 
 ---
 
-## B
+## B（factory#43）
 
 **Title**: Approval summary shows a service step as `service POST /responses` only; show the canned answer and the request checks
 
@@ -56,7 +56,7 @@ Lap 11 is the first lap that uses the fake. In laps 8 and 9 the factory's scorin
 
 ---
 
-## C
+## C（factory#44）
 
 **Title**: Test: `replicate --score` judges both scenario sets of a service spec against a fresh fake
 
@@ -73,7 +73,7 @@ The fake is covered for `run` (test/fake.test.ts: "run end to end with a fake mo
 
 ---
 
-## D
+## D（factory#45）
 
 **Title**: Keep what the app sent to the fake in the result of a failed service step
 
