@@ -27,5 +27,5 @@ L5 は、仕様を入れると動くソフトウェアが出てくる状態を�
 - [research/software-factory-landscape.md](research/software-factory-landscape.md): 「ソフトウェア工場」という言葉の使われ方と、世の中の到達点
 - [research/l5-gap-audit-2026-10-17.md](research/l5-gap-audit-2026-10-17.md): 手元の開発スタックが L5 からどれだけ遠いか
 - [research/adapter-boundary-audit-2026-10-17.md](research/adapter-boundary-audit-2026-10-17.md): `claude -p` 固有の作りが、差し替え用の部品の外に漏れていないか
-- [laps/README.md](laps/README.md): 工場を実際に回した記録（lap 1〜6）
+- [laps/README.md](laps/README.md): 工場を実際に回した記録（lap 1〜11）
 - [design/grand-design.md](design/grand-design.md): L5 工場の全体設計（骨組みだけ。後から変えにくい線と要判断）
