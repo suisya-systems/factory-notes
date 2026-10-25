@@ -203,7 +203,7 @@ factory#50 の問い「ユーザー役の判定を、どんな条件なら合否
 
 1. **採点（モデルを呼ばない）。** 変異ごとに、元の build を書き出し（`exportTree`）、書き換えを当て、その変更自身の隠しシナリオを走らせる。結果は `runs/<id>/user/mutants/<変異 id>.json` に残る。これで「今の判定がこの欠陥を見るか」が分かる。採点はどの呼び出しよりも先に全部済ませるので、書き換えが当たらない変異があれば、お金を使う前に止まる。`--sessions 0` で打てば、採点だけをただで済ませられる。
 2. **セッション。** 変異 build にも、普通の build と同じセッションを流す。ユーザー役から見ると、普通の build と区別がつかない（指示の文面に変異のことは何も入らない）。記録は `<build>~<変異 id>--<モデル>--<重点>-s<k>.json` で、記録の中に `mutant` と `focus` を持つ。
-3. **比較表。** `compare.md` のモデルごとの節に「Seeded defects」の表を足した。
+3. **比較表。** `compare.md` の先頭に、採点した変異とシナリオの結果の表を出す（セッションが無くても出る）。モデルごとの節には「Seeded defects」の表を足した。
 
 | mutant | build | defect | scenarios on the mutant | user | caught |
 |---|---|---|---|---|---|
@@ -303,7 +303,7 @@ npm run factory -- user-judge pay-refunds-cc-p-r2 --request requests/pay-refunds
 npm run factory -- user-judge notify-queue-cc-p   --request requests/notify-queue.md --sessions 2 --max-cost 15 --mutants "$M/notify-queue-cc-p.json"
 ```
 
-- 手順 1 の後、`$FACTORY_HOME/runs/<id>/user/mutants/*.json` か compare.md の「scenarios on the mutant」で、各変異がシナリオで落ちたかを見る。
+- 手順 1 のコマンドは compare.md を表示する。その先頭の表（「Seeded defects, scored by this change's scenarios」）で、各変異がシナリオで落ちたかを見る。セッションが 0 本でも出る。
 - 手順 2 は、手順 1 と同じコマンドに `--sessions 2 --max-cost 15` を付けたものである。採点済みの変異はもう一度採点しない。
 
 ### 費用
