@@ -1,0 +1,18 @@
+[
+  {
+    "id": "ship-no-reserve",
+    "build": "claude-opus-5-5-1",
+    "file": "server.js",
+    "find": "for (const it of o.items) products.get(it.sku).reserved += it.qty;",
+    "replace": "void 0;",
+    "defect": "a booked order does not reserve its quantities: the product's reserved stays 0 and available does not drop"
+  },
+  {
+    "id": "ship-duplicate-sku",
+    "build": "claude-opus-5-5-1",
+    "file": "server.js",
+    "find": "if (seen.has(sku)) throw bad('duplicate sku');",
+    "replace": "void 0;",
+    "defect": "an order listing the same sku twice is accepted (request: distinct skus, else 400)"
+  }
+]
