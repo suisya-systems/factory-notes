@@ -1,0 +1,10 @@
+[
+  {
+    "id": "notify-mute-ignored",
+    "build": "claude-opus-5-5-1",
+    "file": "server.js",
+    "find": "if (u.muted.includes(b.topic))",
+    "replace": "if (false)",
+    "defect": "an event on a muted topic is not muted: it makes a message (or waits for the digest) like any other event"
+  }
+]

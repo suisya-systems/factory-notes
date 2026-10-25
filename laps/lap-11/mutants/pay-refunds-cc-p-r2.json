@@ -1,0 +1,18 @@
+[
+  {
+    "id": "pay-refunded-not-summed",
+    "build": "claude-opus-5-5-1",
+    "file": "server.js",
+    "find": "order.refunded += refund.amount;",
+    "replace": "void 0;",
+    "defect": "a succeeded refund does not add to the order's refunded total (it stays 0)"
+  },
+  {
+    "id": "pay-discount-unchecked",
+    "build": "claude-opus-5-5-1",
+    "file": "server.js",
+    "find": "if (body.discount < 0 || body.discount >= subtotal) throw bad('discount must be from 0 to below the subtotal');",
+    "replace": "void 0;",
+    "defect": "a discount below 0 or not below the subtotal is accepted (request: 0 to less than the subtotal, else 400)"
+  }
+]
