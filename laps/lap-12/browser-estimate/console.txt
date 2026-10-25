@@ -1,0 +1,19 @@
+env {"node":"v22.17.0","cpus":5,"load":[1.15,1.12,1.36]}
+bare browser: 10 launches, open median 487ms p95 507ms, close median 45ms
+http-par1: 60 runs, 0 failed, wall 13.2s, per scenario median 217ms p95 225ms max 322ms
+ui-par1: 60 runs, 0 failed, wall 68.1s, per scenario median 1093ms p95 1344ms max 1490ms
+http-par4: 60 runs, 0 failed, wall 5.2s, per scenario median 223ms p95 326ms max 328ms
+ui-par4: 240 runs, 0 failed, wall 79.9s, per scenario median 1279ms p95 1655ms max 1913ms
+ui-slow-par4: 90 runs, 0 failed, wall 99.2s, per scenario median 3931ms p95 7433ms max 8744ms
+race-par4: 20 runs, 17 failed, wall 31.2s, per scenario median 6096ms p95 6405ms max 6405ms
+  FAIL race-two-in-order rep 3: step 5: response body did not match expected subset
+  FAIL race-two-in-order rep 0: step 5: response body did not match expected subset
+  FAIL race-two-in-order rep 1: step 5: response body did not match expected subset
+  FAIL race-two-in-order rep 2: step 5: response body did not match expected subset
+  FAIL race-two-in-order rep 5: step 5: response body did not match expected subset
+  FAIL race-two-in-order rep 7: step 5: response body did not match expected subset
+  FAIL race-two-in-order rep 4: step 5: response body did not match expected subset
+  FAIL race-two-in-order rep 8: step 5: response body did not match expected subset
+  FAIL race-two-in-order rep 9: step 5: response body did not match expected subset
+  FAIL race-two-in-order rep 11: step 5: response body did not match expected subset
+wrote /home/happy_ryo/work/org/workers/factory-notes/.worktrees/factory-54-browser-estimate/.worker-scratch/measure-out/measure-2026-10-25T20-46-24-712Z.json (303s total)

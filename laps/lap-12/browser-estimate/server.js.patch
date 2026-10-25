@@ -1,0 +1,19 @@
+--- /home/happy_ryo/work/org/workers/factory-practice-memo/server.js	2026-10-17 19:26:48.608070712 +0900
++++ /home/happy_ryo/work/org/workers/factory-notes/.worktrees/factory-54-browser-estimate/.worker-scratch/memo-app/server.js	2026-10-26 05:36:19.128396454 +0900
+@@ -5,6 +5,7 @@
+ 
+ const HOST = '127.0.0.1';
+ const PORT = Number.parseInt(process.env.PORT ?? '', 10) || 3000;
++const PAGE = require('./page.js')(Number(process.argv[2]) || 0); // factory#54: the page over this API
+ const MAX_BODY_BYTES = 1024 * 1024;
+ const TITLE_MAX = 200;
+ const BODY_MAX = 10000;
+@@ -298,6 +299,8 @@
+   if (path.length > 1 && path.endsWith('/')) path = path.slice(0, -1);
+   const method = req.method;
+ 
++  if (path === '/' && method === 'GET') { res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' }); return res.end(PAGE); }
++
+   if (path === '/memos') {
+     if (method === 'GET') return send(res, 200, listMemos(url.searchParams));
+     if (method === 'POST') {
