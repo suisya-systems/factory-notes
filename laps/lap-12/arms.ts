@@ -236,16 +236,23 @@ function checkFlakes(file: string, got: Flakes): boolean {
   return false
 }
 
-// Per build the pass fraction of the scenarios kept: not in errors, in the stratum, and (lap 12) not a flake of that build.
+// One build's pass fraction of the scenarios kept: kept by keep() and (lap 12) not a flake of that build. emptied: the
+// build has results for the set but keeps none (in the stratum 'all', the flake rule's "the count stops").
+export function buildRate(xs: ScenarioResult[], keep: (sid: string) => boolean, fl: string[]) {
+  const k = xs.filter((x) => keep(x.id) && !fl.includes(x.id))
+  return { r: k.length ? k.filter((x) => x.pass).length / k.length : null, emptied: xs.length > 0 && !k.length }
+}
+// Per build the pass fraction of the scenarios kept: not in errors, in the stratum, not a flake of that build.
 // short: a build has fewer judgements than the rule needs.
 function rates(sd: string, specId: string, sets: string[], stratum: Stratum, errors: Record<string, string[]>, n: number) {
   const jd = judged(sd, specId, n), out: Record<string, (number | null)[]> = {}
+  let emptied = false
   for (const id of sets) {
     const specLayer = new Set((readJson(join(sd, 'vault', id, 'classification.json')) as Classified[]).filter(inSpecLayer).map((c) => c.id))
     const keep = (sid: string) => !(errors[id] ?? []).includes(sid) && (stratum === 'all' || specLayer.has(sid) === (stratum === 'spec'))
-    out[id] = jd.map(({ js }) => { const fl = flaky(js, id), xs = (js.at(-1)!.results[id] ?? []).filter((x) => keep(x.id) && !fl.includes(x.id)); return xs.length ? xs.filter((x) => x.pass).length / xs.length : null })
+    out[id] = jd.map(({ js }) => { const b = buildRate(js.at(-1)!.results[id] ?? [], keep, flaky(js, id)); emptied ||= b.emptied; return b.r })
   }
-  return { rates: out, builds: jd.length, short: jd.some((j) => j.js.length < n) }
+  return { rates: out, builds: jd.length, short: jd.some((j) => j.js.length < n), emptied }
 }
 // U (lap 9's pre-registered measure) is descriptive in lap 10.
 export function undecidedShare(sets: Classified[][]): number | null {
@@ -347,22 +354,23 @@ export function across(byReq: Record<string, ReqResult>, minRequests: number): {
 }
 
 function analyse(pre: Prereg, sd: string, errors: Record<string, string[]>) {
-  const res: Record<string, Record<Stratum, { P: Record<string, number | null>; c: Contrasts; complete: boolean }>> = {}
+  const res: Record<string, Record<Stratum, { P: Record<string, number | null>; c: Contrasts; complete: boolean; emptied: boolean }>> = {}
   for (const [req, { pairs }] of Object.entries(pre.requests)) {
     const arms = { cc: [] as string[], cx: [] as string[], xx: [] as string[], xc: [] as string[] }
     for (const p of pairs) { arms[`${p.spec}${p.spec}` as 'cc' | 'xx'].push(p.own); arms[p.spec === 'c' ? 'cx' : 'xc'].push(p.cross ?? '') }
     res[req] = {} as never
     for (const st of ['all', 'spec', 'rest'] as Stratum[]) {
       const P: Record<string, number | null> = {}
-      let complete = true
+      let complete = true, emptied = false
       for (const p of pairs) {
         const r = rates(sd, p.own, p.cross ? [p.own, p.cross] : [p.own], st, errors, pre.judgements)
         if (r.builds !== pre.k || r.short) complete = false
+        emptied ||= r.emptied
         for (const [id, xs] of Object.entries(r.rates)) P[id] = mean(xs)
       }
       const c = contrasts(P, arms, pre.lines)
       if (!complete || pairs.some((p) => !p.cross)) for (const v of Object.values(c)) v.v = '?'
-      res[req][st] = { P, c, complete }
+      res[req][st] = { P, c, complete, emptied }
     }
   }
   return res
@@ -397,7 +405,8 @@ function report(pre: Prereg, sd: string, errorsFile?: string, flakesFile?: strin
     }
     const offRaw = atCeiling(raw[req].all.P, pre.ceilingPct) ? 'CEILING' : atFloor(raw[req].all.P, pre.floorPct) ? 'FLOOR' : null
     const offCor = cor ? (atCeiling(cor[req].all.P, pre.ceilingPct) ? 'CEILING' : atFloor(cor[req].all.P, pre.floorPct) ? 'FLOOR' : null) : null
-    const off = overLine(fn, fc, pre.maxFlakePct) ? `FLAKES: ${fn} of ${fc} cells, over ${pre.maxFlakePct} %` : offRaw ?? (offCor ? `${offCor} in the corrected figures` : null)
+    const emptied = raw[req].all.emptied ? 'STOPPED: a build keeps no scenario of a set after the exclusions' : cor?.[req].all.emptied ? 'STOPPED: a build keeps no scenario of a set after the exclusions (corrected figures)' : null
+    const off = overLine(fn, fc, pre.maxFlakePct) ? `FLAKES: ${fn} of ${fc} cells, over ${pre.maxFlakePct} %` : emptied ?? offRaw ?? (offCor ? `${offCor} in the corrected figures` : null)
     for (const st of ['all', 'spec', 'rest'] as Stratum[]) {
       const r = raw[req][st], c = cor?.[req][st]
       lines.push(`## ${req}, scenarios: ${st}${r.complete ? '' : ' (INCOMPLETE: a spec has fewer than k builds, or a build fewer judgements than the rule)'}${off ? ` (${off}: every verdict undecided)` : ''}`, '',
@@ -478,6 +487,11 @@ function selfTest() {
   // screen Q without each build's flakes (numerator and denominator); a build left with none stops the count
   assert.equal(screenQ([jr(false, true), jr(false, true)], 's', ['k', 'j'], [], [['k'], []]), 0.75)
   assert.throws(() => screenQ([jr(false, true)], 's', ['k', 'j'], ['j'], [['k']]), /keeps no scenario/)
+  // the main P: flakes leave the fraction; a build with results that keeps none is emptied (the request stops), one without results is not
+  const all = () => true, xs2 = jr(false, true).results.s
+  assert.deepEqual(buildRate(xs2, all, ['k']), { r: 1, emptied: false })
+  assert.deepEqual(buildRate(xs2, (sid) => sid !== 'j', ['k']), { r: null, emptied: true })
+  assert.deepEqual(buildRate([], all, []), { r: null, emptied: false })
   // placeholders: filled places counted; unfilled places and names used before their capture are problems
   const sc = [{ id: 's', steps: [
     { path: '/g', expect: {}, capture: { g: 'id' } },
