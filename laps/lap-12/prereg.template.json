@@ -1,0 +1,114 @@
+{
+  "note": "lap 12 pre-registration (template; lap 11's with the lap 12 requests and the flake rule). At gate main the requests the screen left out are deleted; entrance.ts resolves each set to its last redraft and fills approvedVersions at gate entrance, before any main build. Rules: docs/lap-12/runbook.md. Lines as lap 8. A request is at the ceiling when every set P >= ceilingPct, at the floor when every set P <= floorPct (raw or corrected): its verdicts are undecided. Each main build is rescored twice (judgements = 3); P leaves out the flakes in flakes.json (flakeRule). The verdict across requests needs at least minRequests requests in the rule. errors.json and flakes.json (after the runs) give the corrected figures.",
+  "k": 8,
+  "judgements": 3,
+  "requests": {
+    "cart-checkout": {
+      "pairs": [
+        {
+          "spec": "c",
+          "own": "cart-checkout-cc-1",
+          "cross": "cart-checkout-cx-1"
+        },
+        {
+          "spec": "x",
+          "own": "cart-checkout-xx-1",
+          "cross": "cart-checkout-xc-1"
+        },
+        {
+          "spec": "c",
+          "own": "cart-checkout-cc-2",
+          "cross": "cart-checkout-cx-2"
+        },
+        {
+          "spec": "x",
+          "own": "cart-checkout-xx-2",
+          "cross": "cart-checkout-xc-2"
+        }
+      ]
+    },
+    "task-board": {
+      "pairs": [
+        {
+          "spec": "c",
+          "own": "task-board-cc-1",
+          "cross": "task-board-cx-1"
+        },
+        {
+          "spec": "x",
+          "own": "task-board-xx-1",
+          "cross": "task-board-xc-1"
+        },
+        {
+          "spec": "c",
+          "own": "task-board-cc-2",
+          "cross": "task-board-cx-2"
+        },
+        {
+          "spec": "x",
+          "own": "task-board-xx-2",
+          "cross": "task-board-xc-2"
+        }
+      ]
+    },
+    "expense-wizard": {
+      "pairs": [
+        {
+          "spec": "c",
+          "own": "expense-wizard-cc-1",
+          "cross": "expense-wizard-cx-1"
+        },
+        {
+          "spec": "x",
+          "own": "expense-wizard-xx-1",
+          "cross": "expense-wizard-xc-1"
+        },
+        {
+          "spec": "c",
+          "own": "expense-wizard-cc-2",
+          "cross": "expense-wizard-cx-2"
+        },
+        {
+          "spec": "x",
+          "own": "expense-wizard-xx-2",
+          "cross": "expense-wizard-xc-2"
+        }
+      ]
+    },
+    "room-slots": {
+      "pairs": [
+        {
+          "spec": "c",
+          "own": "room-slots-cc-1",
+          "cross": "room-slots-cx-1"
+        },
+        {
+          "spec": "x",
+          "own": "room-slots-xx-1",
+          "cross": "room-slots-xc-1"
+        },
+        {
+          "spec": "c",
+          "own": "room-slots-cc-2",
+          "cross": "room-slots-cx-2"
+        },
+        {
+          "spec": "x",
+          "own": "room-slots-xx-2",
+          "cross": "room-slots-xc-2"
+        }
+      ]
+    }
+  },
+  "approvedVersions": {},
+  "errorsRule": "Errors rule (lap 8, plus lap 12): an expected value that contradicts the request, or an amount, date or count that does not add up, is an expectation error; so is a ui check on a text or look the request does not fix (only texts the scenario entered or the request fixes may be checked); and a scenario whose ui action without an expect is followed by another action (fill / click) while the later steps depend on what that action changes is a wait error ('wait'). Each with a quote of the request; the whole scenario is left out.",
+  "flakeRule": "Flake rule (lap 12): per build, compare the last 3 judgements on the same factory version (replicates/history/<build>.<k>.json and the current record; after a factory fix, rescore twice more and use the 3 after the fix). A (set, scenario, build) whose pass / fail differs among them is a flake: it is left out of that build's pass fraction for that set (numerator and denominator); the others use their (unchanged) verdict. Flakes are listed in flakes.json as {\"<set>\": {\"<scenario id>\": [\"<build>\", ...]}} and must match tally's 'Verdicts that changed across judgements'. A request whose flakes exceed maxFlakePct of its (set, scenario, build) cells gets no verdict (it does not enter the rule) and is reported before the next gate; a build left with no scenario of a set after the exclusions stops the count for that request.",
+  "maxFlakePct": 5,
+  "lines": {
+    "effectPts": 10,
+    "nullPts": 5
+  },
+  "ceilingPct": 95,
+  "floorPct": 20,
+  "minRequests": 2
+}
