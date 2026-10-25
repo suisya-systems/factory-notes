@@ -1,0 +1,17 @@
+{
+  "note": "lap 12 screen rule (lap 11's, plus the flake rule), fixed at gate screen-specs (before any screen build). Per request R: Q = mean over the k builds of R-cc-p of the pass fractions on R-cc-p and on R-cx-p, averaged (both families' scenarios weigh the same); a set a build has no results for counts 0; scenarios listed in screen-errors.json (written at gate main under the errors rule, approved by the owner) are left out, and so are the flakes in screen-flakes.json (flakeRule). R is in the band when floorPct <= Q < ceilingPct. Up to maxRequests requests in the band go on to the main runs, lowest Q first; ties: the order below. The screen's drafts and builds are never used in the main analysis. Names resolve to the last redraft. Rules: laps/lap-12/runbook.md.",
+  "k": 4,
+  "judgements": 3,
+  "ceilingPct": 90,
+  "floorPct": 30,
+  "maxRequests": 3,
+  "maxFlakePct": 5,
+  "requests": [
+    "cart-checkout",
+    "task-board",
+    "expense-wizard",
+    "room-slots"
+  ],
+  "errorsRule": "Errors rule (lap 8, plus lap 12): an expected value that contradicts the request, or an amount, date or count that does not add up, is an expectation error; so is a ui check on a text or look the request does not fix (only texts the scenario entered or the request fixes may be checked); and a scenario whose ui action without an expect is followed by another action (fill / click) while the later steps depend on what that action changes is a wait error ('wait'). Each with a quote of the request; the whole scenario is left out.",
+  "flakeRule": "Flake rule (lap 12): per build, compare the last 3 judgements on the same factory version (replicates/history/<build>.<k>.json and the current record; after a factory fix, rescore twice more and use the 3 after the fix). A (set, scenario, build) whose pass / fail differs among them is a flake: it is left out of that build's pass fraction for that set (numerator and denominator); the others use their (unchanged) verdict. Flakes are listed in screen-flakes.json as {\"<set>\": {\"<scenario id>\": [\"<build>\", ...]}} and must match tally's 'Verdicts that changed across judgements'. A request whose flakes exceed maxFlakePct of its (set, scenario, build) cells gets no Q and is reported before the next gate; a build left with no scenario of a set after the exclusions stops the count for that request."
+}
