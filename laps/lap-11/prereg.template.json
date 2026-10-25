@@ -1,0 +1,32 @@
+{
+  "note": "lap 11 pre-registration (template; lap 10's with the lap 11 requests). At gate main the requests the screen left out are deleted; entrance.ts resolves each set to its last redraft and fills approvedVersions at gate entrance, before any main build. Rules: docs/lap-11/runbook.md. Lines as lap 8. A request is at the ceiling when every set P >= ceilingPct, at the floor when every set P <= floorPct (raw or corrected): its verdicts are undecided. The verdict across requests needs at least minRequests requests in the rule. errors.json (after the runs) gives the corrected figures.",
+  "k": 8,
+  "requests": {
+    "fx-invoice": { "pairs": [
+      { "spec": "c", "own": "fx-invoice-cc-1", "cross": "fx-invoice-cx-1" },
+      { "spec": "x", "own": "fx-invoice-xx-1", "cross": "fx-invoice-xc-1" },
+      { "spec": "c", "own": "fx-invoice-cc-2", "cross": "fx-invoice-cx-2" },
+      { "spec": "x", "own": "fx-invoice-xx-2", "cross": "fx-invoice-xc-2" } ] },
+    "ship-orders": { "pairs": [
+      { "spec": "c", "own": "ship-orders-cc-1", "cross": "ship-orders-cx-1" },
+      { "spec": "x", "own": "ship-orders-xx-1", "cross": "ship-orders-xc-1" },
+      { "spec": "c", "own": "ship-orders-cc-2", "cross": "ship-orders-cx-2" },
+      { "spec": "x", "own": "ship-orders-xx-2", "cross": "ship-orders-xc-2" } ] },
+    "pay-refunds": { "pairs": [
+      { "spec": "c", "own": "pay-refunds-cc-1", "cross": "pay-refunds-cx-1" },
+      { "spec": "x", "own": "pay-refunds-xx-1", "cross": "pay-refunds-xc-1" },
+      { "spec": "c", "own": "pay-refunds-cc-2", "cross": "pay-refunds-cx-2" },
+      { "spec": "x", "own": "pay-refunds-xx-2", "cross": "pay-refunds-xc-2" } ] },
+    "notify-queue": { "pairs": [
+      { "spec": "c", "own": "notify-queue-cc-1", "cross": "notify-queue-cx-1" },
+      { "spec": "x", "own": "notify-queue-xx-1", "cross": "notify-queue-xc-1" },
+      { "spec": "c", "own": "notify-queue-cc-2", "cross": "notify-queue-cx-2" },
+      { "spec": "x", "own": "notify-queue-xx-2", "cross": "notify-queue-xc-2" } ] }
+  },
+  "approvedVersions": {},
+  "errorsRule": "Errors rule (lap 8, plus lap 11): an expected value that contradicts the request, or an amount, date or count that does not add up, is an expectation error; so is a set step (a service step POST /responses) whose answer contradicts the request's service API (a method or path the API does not have, or a status, body or header it does not give for that method and path; an answer the request's own catch-all line covers, such as an unlisted status handled like a 5xx, does not contradict it), each with a quote of the request.",
+  "lines": { "effectPts": 10, "nullPts": 5 },
+  "ceilingPct": 95,
+  "floorPct": 20,
+  "minRequests": 2
+}
