@@ -86,7 +86,7 @@ build ごとの通ったシナリオの数（除く前。pay-ship-cx-p は 12 �
 
 ## L2
 
-系列 O の L2（3 本を合わせた依頼、状態ディレクトリ `.factory-cal80-o2`）は流し中である。結果はこの報告に入れていない。
+系列 O の L2（3 本を合わせた依頼、状態ディレクトリ `.factory-cal80-o2`）の結果は [l2-report.md](l2-report.md) にある。L2 もすべて 90 % 以上で、系列 O は閉じた。上の「全員が落ちたシナリオ」の `note` の段は、作る役に渡った仕様が Undecided にしていた点として、l2-report.md で読み直している。
 
 ## ゲートの承認
 
@@ -129,5 +129,5 @@ lap 台帳（`.factory-cal80-o1/lap-ledger.jsonl`、246 行）の終わりの行
 
 - [design.md](design.md): 較正の設計（2 系列、目標の窓、落ちの質、費用の線）。
 - [l1-requests.md](l1-requests.md)・[requests/](requests/)・[rules.json](rules.json)・[cal80-o1.json](cal80-o1.json): L1 の依頼文、事前の基準、lap の定義。
-- [l2-requests.md](l2-requests.md)・[cal80-o2.json](cal80-o2.json): L2 の依頼文と lap の定義（流し中）。
+- [l2-requests.md](l2-requests.md)・[cal80-o2.json](cal80-o2.json): L2 の依頼文と lap の定義。結果は [l2-report.md](l2-report.md)。
 - [tools.md](tools.md)・[arms.ts](arms.ts)・[screen.json](screen.json): 較正の道具と選ぶ規則。
