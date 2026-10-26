@@ -52,7 +52,8 @@ $A --stage measure --builder claude-opus-5-5 stock-tasks pay-ship shop-expense
 $A --stage measure --builder claude-sonnet-5-5 stock-tasks pay-ship shop-expense
 ```
 
-- L2 の依頼の名前（stock-tasks-library・pay-ship-invoice・shop-expense-rooms、状態ディレクトリ `.factory-cal80-o2`）は、L2 の依頼文を書いたとき（L1 の結果の後）に `screen.json` の `requests` に足した。窓・線は変えていない（[l2-requests.md](l2-requests.md)）。
+- L2 の依頼の名前（stock-tasks-library・pay-ship-invoice・shop-expense-rooms、状態ディレクトリ `.factory-cal80-o2`）は、L2 の依頼文を書いたとき（L1 の結果の後）に `screen.json` の `requests` に足した。窓・線は変えていない（[l2-requests.md](l2-requests.md)）。L3 の依頼の名前（stock-tasks-library-settle・pay-ship-invoice-notify・shop-expense-rooms-board、状態ディレクトリ `.factory-cal80-o3`）も同じ形で足した（[l3-requests.md](l3-requests.md)）。
+- `--precheck` の段は `rules.json` の `stages` から読む。L3（3,100〜3,600 語、部品の間の絡み 30 組以上）は `stages` に足しただけで、`arms.ts` は変えていない。
 
 ## E: `--precheck`
 
