@@ -79,7 +79,7 @@
 
 ### 段 0: 今の工場で既存の build を判定し直す（モデルを呼ばない、$0）
 
-- 3 つの写しのそれぞれで、12 依頼の `replicate <own> --score <cross> --rescore` を 2 回ずつかける。opus の 4 build に、今の工場の判定が 2 回足される。
+- 3 つの写しのそれぞれで、12 依頼の `replicate <own> --score <cross> --rescore` を 3 回ずつかける。opus の 4 build に、今の工場の判定が 3 回足される。揺れの規則は build ごとに最後の 3 回の判定を比べるので、2 回では古い工場の版の判定が 1 回混ざり、工場の直しで変わった合否を揺れと読み違える（12 周目の「比べる判定」で、直した後の 3 回で比べるとしたのと同じ理由）。
 - 確かめること: (1) 今の工場が、10・11 周目の状態ディレクトリを読んで採点できるか（11 周目は偽物の段を使う）。(2) 今の工場での opus の Q（12 周目の表と同じになるはずで、変われば工場の版の違いを先に読む）。
 - 段 0 で読み違いや採点の失敗が出たら、モデルを呼ぶ前に止めて窓口に知らせる。
 - 合わせて、sonnet の作る役で隔離の確かめ（`probe-isolation`、作る役の役で 1 回）を流す。これはモデルを呼ぶ（5 周目の sonnet で $0.06）。
@@ -98,6 +98,7 @@
 | 下見の Q が 60 % ≤ Q < 95 % の依頼がある | 段 2 へ。該当する依頼のうち、80 % に近い順に最大 6 本 |
 | すべて 95 % 以上（sonnet でも天井） | 段 2 は流さない。K2（Haiku の世代、工場の変更が要る）か K5（依頼を長くする）を、オーナーに諮る |
 | すべて 60 % 未満 | 段 2 は流さない。起動しなかった build の割合と、全員が落ちたシナリオを読む。作り切れなかった落ちが主なら、sonnet は弱すぎる。opus に戻して K5 を諮る |
+| 上のどれでもない（60 % 未満と 95 % 以上の依頼だけ） | 段 2 は流さない。60 % 未満の側を上の行と同じく読み、95 % 以上の側と合わせて、K2・K5 のどちらか、または較正を止めるかをオーナーに諮る |
 
 - 60 % と 95 % は、2 build の下見のぶれを見込んだ広めの線である。目標の窓（70〜90 %）の外でも、4 build で窓に入りうる依頼を落とさないようにした。
 
@@ -138,9 +139,8 @@ Q を 80 % に下げたいのは、シナリオの系統の差が見える余地
 cp -a ../factory-lap12-run/.factory-lap12 .factory-cal80-lap12   # lap10・lap11 も同じ形
 export FACTORY_HOME="$PWD/.factory-cal80-lap12"
 
-# 段 0: 今の工場で opus の build を判定し直す（依頼ごとに 2 回、$0）
-npm run factory -- replicate cart-checkout-cc-p --score cart-checkout-cx-p --rescore
-npm run factory -- replicate cart-checkout-cc-p --rescore --score cart-checkout-cx-p
+# 段 0: 今の工場で opus の build を判定し直す（依頼ごとに 3 回、$0）
+npm run factory -- replicate cart-checkout-cc-p --score cart-checkout-cx-p --rescore   # 同じコマンドを 3 回打つ
 # 隔離の確かめ（作る役を sonnet にして 1 回）
 npm run factory -- probe-isolation cal80-probe --model builder=claude-sonnet-5-5
 
