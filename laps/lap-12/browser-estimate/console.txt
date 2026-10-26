@@ -16,4 +16,4 @@ race-par4: 20 runs, 17 failed, wall 31.2s, per scenario median 6096ms p95 6405ms
   FAIL race-two-in-order rep 8: step 5: response body did not match expected subset
   FAIL race-two-in-order rep 9: step 5: response body did not match expected subset
   FAIL race-two-in-order rep 11: step 5: response body did not match expected subset
-wrote /home/happy_ryo/work/org/workers/factory-notes/.worktrees/factory-54-browser-estimate/.worker-scratch/measure-out/measure-2026-10-25T20-46-24-712Z.json (303s total)
+wrote <worker>/.worker-scratch/measure-out/measure-2026-10-25T20-46-24-712Z.json (303s total)
