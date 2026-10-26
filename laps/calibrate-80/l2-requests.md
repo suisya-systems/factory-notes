@@ -23,12 +23,12 @@
 | 依頼 | 部品 | 語数（wc -w） | 規則 | 絡み | 部品の絡みの合計 | 部品の間の絡み |
 |---|---|---|---|---|---|---|
 | stock-tasks-library | stock-backorder・task-deps・library-holds（807 語） | 2,385 | 87 | 135 | 105 | 27 |
-| pay-ship-invoice | ship-orders・pay-refunds・fx-invoice（901 語） | 2,494 | 113 | 153 | 119 | 29 |
-| shop-expense-rooms | cart-checkout・expense-wizard・room-slots（798 語） | 2,690 | 124 | 153 | 119 | 26 |
+| pay-ship-invoice | ship-orders・pay-refunds・fx-invoice（901 語） | 2,495 | 113 | 153 | 119 | 29 |
+| shop-expense-rooms | cart-checkout・expense-wizard・room-slots（798 語） | 2,693 | 124 | 154 | 119 | 27 |
 
 - 3 本とも L2 の線（2,300〜2,700 語、部品の間の絡み 20 組以上、絡みは部品の合計以上）の内側にある。
-- 部品の間の絡みは、L1 の分（14・15・13）に、足した部品との組（13・14・13）を足したもの。
-- **shop-expense-rooms は 2,690 語で、上の端に 10 語しかない。** L1 の shop-expense がすでに 1,798 語で、room-slots の 798 語を足すと重なりを除いても線に近い。つなぐ文を詰めた（下の「部品の文言から変えたところ」）。依頼文を直すときは語数を測り直すこと。
+- 部品の間の絡みは、L1 の分（14・15・13）に、足した部品との組（13・14・14）を足したもの。
+- **shop-expense-rooms は 2,693 語で、上の端に 7 語しかない。** L1 の shop-expense がすでに 1,798 語で、room-slots の 798 語を足すと重なりを除いても線に近い。つなぐ文を詰めた（下の「部品の文言から変えたところ」）。依頼文を直すときは語数を測り直すこと。
 - 絡みの数（`--precheck` の `pairs`）は順を数えない重なりを除いた数。stock-tasks-library は 137 行のうち、L1 から引き継いだ `start|finish` と `finish|start`、library-holds から写した `loan-ready-hold|loan-refuse` と `loan-refuse|loan-ready-hold`（どちらも理由の違う同じ組）の重なり 2 組を除いて 135。
 
 ## 組み合わせの選び方
@@ -61,7 +61,7 @@
 
 - 枠は昼食代 `lunch`（1 人分、0〜3,000、既定 0）を持つ。`GET /bookings/{id}` は始まった予約も含めて読め、`lunch`・`started`・`claimedBy` を持つ。
 - 報告の行は `booking` で予約の昼食代を請求できる。行は `meals` で、金額は枠の `lunch`、日付は枠の日付。本人の予約で、枠が始まっていて、まだ請求されておらず、1 回だけ書かれていること。`order` と `booking` の両方を持つ行は 400。昼食代は 1 日の meals の上限（5,000）に入る。受け付けた報告の番号が予約の `claimedBy` になる。
-- `/new` の 2 段目に予約の行を足す操作（`bookingInput`・`addBookingButton`）と、3 段目の 409（注文の行の後に、請求できなくなった予約を行の順に出す）。
+- `/new` の 2 段目に予約の行を足す操作（`bookingInput`・`addBookingButton`）と、3 段目の 409（注文の行の後に、請求済みになったか、1 段目で名前を変えて他の社員のものになった予約を行の順に出す）。
 
 ## 部品の文言から変えたところ
 

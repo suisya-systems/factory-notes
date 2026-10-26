@@ -2321,6 +2321,7 @@
         "expense-wizard/ui-add-booking|room-slots/lunch: a booking without lunch, and the line's amount",
         "expense-wizard/ui-add-booking|room-slots/booking-user: a booking of another user is not yours",
         "expense-wizard/ui-submit-booking|room-slots/booking-get: the bookings now claimed",
+        "expense-wizard/ui-submit-booking|room-slots/booking-user: the bookings of another employee after the name was changed at step 1",
         "expense-wizard/ui-next2-limits|room-slots/lunch: lunches over 5,000 on a date stop at step 2",
         "expense-wizard/booking-line|expense-wizard/order-line: a line has an order or a booking, not both",
         "expense-wizard/booking-claim|expense-wizard/claim: the report's number goes to its orders and bookings",
