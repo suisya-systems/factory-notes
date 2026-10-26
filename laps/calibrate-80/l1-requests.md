@@ -12,9 +12,11 @@
 | [rules.json](rules.json) | `docs/calibrate-80/rules.json` | `--precheck` の規則と絡み（下の「rules.json の形」） |
 | [cal80-o1.json](cal80-o1.json) | `examples/cal80-o1.json` | 系列 O の L1 の lap 定義（状態ディレクトリ `.factory-cal80-o1`） |
 
-`arms.ts`（道具 A・E）と `screen.json`（道具 B）は並走タスク factory-calib-tools が同じ `laps/calibrate-80/` に置き、工場では `docs/calibrate-80/` に写す。定義はこの 2 つの置き場と引数の形を factory-calib-tools と合わせてある（下の「lap 定義」）。
+`arms.ts`（道具 A・E）と `screen.json`（道具 B）は factory-calib-tools（#36）が同じ `laps/calibrate-80/` に置いた。工場では `docs/calibrate-80/` に写す。定義はこの 2 つの置き場と引数の形を [tools.md](tools.md) に合わせてある（下の「lap 定義」）。
 
-## 数え（作成担当が数えた。`--precheck` で窓口が確かめる）
+## 数え
+
+作成担当が数え、[tools.md](tools.md) の `arms.ts --precheck rules.json` でも確かめた（工場と同じ並びの一時ディレクトリに、工場の `requests/`（da3de63）とこの 3 本を置いて流した。モデルは呼ばない）。3 本とも `passes: yes` で、`--precheck` の数えは下の表と同じ（stock-tasks の絡みは重なりを除いた 84、部品の合計は 69）。
 
 | 依頼 | 部品 | 語数（wc -w） | 規則 | 絡み | 部品の絡みの合計 | 部品の間の絡み |
 |---|---|---|---|---|---|---|
@@ -69,7 +71,7 @@
 
 ## rules.json の形
 
-factory-calib-tools と合わせた形（E の `--precheck` が読む。詳しくは factory-calib-tools の `tools.md`）。
+E の `--precheck` が読む形（詳しくは [tools.md](tools.md)）。
 
 - top-level の `stages` に段ごとの語数の線と部品の間の絡みの下限（L1: 1,500〜1,800 語・10 組、L2: 2,300〜2,700 語・20 組）。
 - 合わせた依頼は `stage`（`"L1"`）と `parts`（部品の依頼の名前）を持ち、規則は `<部品>/<規則>`。部品の規則をすべて持ち、部品の `pairs` を頭付きですべて持つ。`ui` / `service` は 12 周目と同じく数えない一覧。
@@ -83,12 +85,12 @@ factory-calib-tools と合わせた形（E の `--precheck` が読む。詳し�
 - 残した段: `npm test` → `arms.ts --self-test` → `arms.ts --precheck` → 隔離の確かめ → `-cc-p` の下書き 3 本 → 由来と穴の確かめ → ゲート `screen-specs` → `-cx-p` の下書き 3 本（Codex のシナリオ）→ 仕様の一致（`cmp`）→ 由来と穴の確かめ → ゲート `screen` → `replicate --k 4 --score --max-cost 30`（並列 3）→ 判定し直し 2 回 → `tally` → `arms.ts --screen`。
 - 落とした段: 先頭の Codex の下書き（`-xx-1`）、ゲート `main` と本番の 2×2 のすべて。
 - 下書きの段は、11 周目の依頼の合わせ（pay-ship）に `--service`、12 周目（shop-expense）に `--ui` を付けた。stock-tasks は 10 周目と同じく付けない。
-- ゲート `screen-specs` で `prereg/screen.json`（道具 B）と `prereg/rules.json` を固定する。最後の `arms.ts --screen` は factory-calib-tools の形（`<screen.json> <ROOT> --stage measure --builder claude-opus-5-5 <依頼名>...`、ROOT は工場の worktree の root = `.`）。依頼名と状態ディレクトリの対応は `screen.json` の `requests` に factory-calib-tools が足す。
+- ゲート `screen-specs` で `prereg/screen.json`（道具 B）と `prereg/rules.json` を固定する。最後の `arms.ts --screen` は factory-calib-tools の形（`<screen.json> <ROOT> --stage measure --builder claude-opus-5-5 <依頼名>...`、ROOT は工場の worktree の root = `.`）。依頼名と状態ディレクトリの対応は `screen.json` の `requests` にある（3 本とも `.factory-cal80-o1`）。
 - `--max-cost 30` は設計の値（L1 の `-cc-p` は下書きと opus の 4 build で $10〜$20 の見込み）。
 - 並列は 3（依頼が 3 本）。設計の「2 系列合わせて同時 4 build まで」を守るため、この段と同時に系列 S の build を流すときは 1 本までにする。
 
 ## 何が言えないか
 
 - 部品の間の絡みは作成担当（Claude）が選んで書いた（設計の「合わせた依頼は作成担当が書く」と同じ限界）。
-- 語数と絡みは作成担当が数えた。`--precheck` の結果はまだ無い（E が入ったら窓口が流す）。
+- `--precheck` が確かめるのは語数と数えだけである。部品の間の絡みが本文に本当に書いてあるかは、作成担当が読んで確かめただけで、道具は確かめない。
 - 依頼文は、下書き役が読める英語として作成担当が読み直しただけで、モデルに読ませていない。仕様の書き漏れや曖昧さは、ゲート `screen-specs` で読む。
