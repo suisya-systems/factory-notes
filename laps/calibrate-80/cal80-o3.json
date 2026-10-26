@@ -5,7 +5,7 @@
     {"exec":["npm", "test"]},
     {"exec":["node", "--experimental-strip-types", "--no-warnings", "docs/calibrate-80/arms.ts", "--self-test"]},
     {"exec":["node", "--experimental-strip-types", "--no-warnings", "docs/calibrate-80/arms.ts", "--precheck", "docs/calibrate-80/rules.json"]},
-    {"factory":["probe-isolation", "cal80-o3-probe"]},
+    {"factory":["probe-isolation", "cal80-o3-probe-r2"]},
     {"factory":["draft", "stock-tasks-library-settle-cc-p", "--request", "requests/stock-tasks-library-settle.md"],"redraft":2},
     {"factory":["draft", "pay-ship-invoice-notify-cc-p", "--request", "requests/pay-ship-invoice-notify.md", "--service"],"redraft":2},
     {"factory":["draft", "shop-expense-rooms-board-cc-p", "--request", "requests/shop-expense-rooms-board.md", "--ui"],"redraft":2},
