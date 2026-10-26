@@ -285,7 +285,7 @@ factory#50 の問い「ユーザー役の判定を、どんな条件なら合否
 前提: この変更（factory#50）が main に入っていること。工場の main の checkout で打つ。
 
 ```bash
-export FACTORY_HOME=/home/happy_ryo/work/org/workers/factory/.worktrees/factory-lap11-run/.factory-lap11
+export FACTORY_HOME=<factory-lap11-run>/.factory-lap11   # 11 周目の実行担当の worktree の状態ディレクトリ
 mkdir -p "$FACTORY_HOME/vault/lap11-mutants"
 cp <factory-notes>/laps/lap-11/mutants/*.json "$FACTORY_HOME/vault/lap11-mutants/"
 M="$FACTORY_HOME/vault/lap11-mutants"
