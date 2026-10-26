@@ -1,0 +1,29 @@
+{
+  "note": "calibration screen rule (laps/calibrate-80/design.md), fixed before the first calibration build. Per request R and builder model (arms.ts --builder): Q = mean over that model's builds of R-cc-p of the pass fractions on R-cc-p and on R-cx-p, averaged; lap 12's Q otherwise (a set a build has no results for counts 0; scenarios in screen-errors.json are left out, and so are each build's flakes under flakeRule over its last `judgements` judgements; a request with flakes over maxFlakePct of its cells gets no Q). Stages: look (series S, stage S1: 2 builds, window 60 <= Q < 95, up to 6 requests go on to S2) and measure (4 builds: S2, S3 and series O; target window 70 <= Q < 90, up to 3 requests go on). In both, the requests in the window go on closest to splitPct first; ties: the order given on the command line. Quality (measure): a request with more than maxNotStarted builds that did not start (builderOk false, or no results for a set), or whose started builds alone give Q >= startedCeilingPct, is not picked even in the window. splitPct is also series O's fork (some Q < 80: no L2). requests: request -> its state dir under the root given to --screen. Names resolve to the last redraft. Rules: laps/calibrate-80/tools.md.",
+  "judgements": 3,
+  "maxFlakePct": 5,
+  "splitPct": 80,
+  "stages": {
+    "look": { "k": 2, "floorPct": 60, "ceilingPct": 95, "maxRequests": 6 },
+    "measure": { "k": 4, "floorPct": 70, "ceilingPct": 90, "maxRequests": 3, "maxNotStarted": 1, "startedCeilingPct": 90 }
+  },
+  "requests": {
+    "settle-history": ".factory-cal80-lap10",
+    "stock-backorder": ".factory-cal80-lap10",
+    "library-holds": ".factory-cal80-lap10",
+    "task-deps": ".factory-cal80-lap10",
+    "fx-invoice": ".factory-cal80-lap11",
+    "ship-orders": ".factory-cal80-lap11",
+    "pay-refunds": ".factory-cal80-lap11",
+    "notify-queue": ".factory-cal80-lap11",
+    "cart-checkout": ".factory-cal80-lap12",
+    "task-board": ".factory-cal80-lap12",
+    "expense-wizard": ".factory-cal80-lap12",
+    "room-slots": ".factory-cal80-lap12",
+    "stock-tasks": ".factory-cal80-o1",
+    "pay-ship": ".factory-cal80-o1",
+    "shop-expense": ".factory-cal80-o1"
+  },
+  "errorsRule": "lap 12's errorsRule (laps/lap-12/screen.json), unchanged. For the L0 requests, the errors read in laps 10 to 12 (their screen-errors.json, merged) stand; new ones found on the calibration builds are added under the same rule.",
+  "flakeRule": "lap 12's flakeRule (laps/lap-12/screen.json), unchanged, over the builds of the model given with --builder."
+}
