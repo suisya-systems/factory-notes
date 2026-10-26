@@ -25,7 +25,10 @@
     "shop-expense": ".factory-cal80-o1",
     "stock-tasks-library": ".factory-cal80-o2",
     "pay-ship-invoice": ".factory-cal80-o2",
-    "shop-expense-rooms": ".factory-cal80-o2"
+    "shop-expense-rooms": ".factory-cal80-o2",
+    "stock-tasks-library-settle": ".factory-cal80-o3",
+    "pay-ship-invoice-notify": ".factory-cal80-o3",
+    "shop-expense-rooms-board": ".factory-cal80-o3"
   },
   "errorsRule": "lap 12's errorsRule (laps/lap-12/screen.json), unchanged. For the L0 requests, the errors read in laps 10 to 12 (their screen-errors.json, merged) stand; new ones found on the calibration builds are added under the same rule.",
   "flakeRule": "lap 12's flakeRule (laps/lap-12/screen.json), unchanged, over the builds of the model given with --builder."
