@@ -23,5 +23,6 @@
 | [design/grand-design.md](design/grand-design.md) | L5 工場の骨組みだけの全体設計を書く。要判断 2 件（判定の形、本番シグナルが人の承認を通るか） | 要判断 2 件はオーナーが決定済み（[decisions.md](decisions.md)）。7 章（置き場所と仕様リポジトリ、振る舞いを変える変更）を、オーナーと合意した方向として追記 | 2026-10-18 |
 | 公開の準備 | 関連リポジトリを公開する前に、全履歴で秘密情報を点検する。公開の切替はオーナーの最終確認後（[decisions.md](decisions.md)） | 4 リポジトリの全履歴点検を実施し、手元の絶対パスと勤務先メールを全履歴から書き換えて強制 push 済み。オーナーが 4 リポジトリ（factory / factory-notes / factory-practice-memo / factory-practice-split）を公開に切り替えた（gh で PUBLIC を確認済み）。完了 | 2026-10-18 |
 | オーナーの記事 | オーナーが記事を書く | 2026-10-25 の予定 | 2026-10-18 |
+| 13 周目の準備 | runtime の題材 A を `run` の手と hash 固定の依存で回すための準備。lock・wheelhouse・出荷先・依頼文を作り、手順書と事前登録を書いた（[laps/lap-13/](laps/lap-13/)、決定は [decisions.md](decisions.md) の D13-1〜6）。root が要る操作（`/opt/factory-deps`）と費用の実測の `draft`（準備の sandbox では bubblewrap が入れ子にできず未実施）は人が流す。本番の build・replicate・ship は流していない | 準備まで完了。次は人が手順 1〜7 を流し、事前登録を見てから本番を別タスクで | 2026-10-27 |
 
 背景: continuo#275 / rondo#714 / rondo#715 の 3 件は、Claude の呼び出しを Agent SDK に差し替える前に直すもの（[research/adapter-boundary-audit-2026-10-17.md](research/adapter-boundary-audit-2026-10-17.md)）。

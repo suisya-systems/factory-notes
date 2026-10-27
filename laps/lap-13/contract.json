@@ -1,0 +1,1 @@
+{"command": ["python3", "-m", "claude_org_runtime.cli", "dispatcher", "delegate-plan"], "pythonPath": ["src"], "deps": "9d3778c3e9335fda0b852970cca76ee606df561c191071beb796363a3b9b7032"}

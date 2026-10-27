@@ -121,3 +121,31 @@ rondo は手元の開発スタックの一部で、人の依頼を受けてワ�
 - [factory#13](https://github.com/suisya-systems/factory/issues/13)（run の並列実行）に着手するとき。
 - 台帳の形を決めるとき。
 - [continuo#275](https://github.com/suisya-systems/continuo/issues/275) が解決し、npm 公開が実施されたとき。
+
+## 2026-10-27
+
+13 周目の決定。D 番号は 13 周目の中での通し番号（D13-1 など）。手順と事前登録は [laps/lap-13/runbook.md](laps/lap-13/runbook.md) と [laps/lap-13/prereg.json](laps/lap-13/prereg.json)。
+
+### D13-1: 13 周目は claude-org-runtime の題材 A を、`run` の手と hash 固定の依存で回す（ゲート 1）
+
+ゲート 1（オーナー）の決定: 工場に足す手順は `run` の手、依存は hash 固定の wheelhouse から HOME の外に作る仮想環境、題材は A（herdr の pane id が 10 個目以降でも `dispatcher delegate-plan` が通る。runtime の #240、v0.1.50）、費用の上限は $150。工場の対応は suisya-systems/factory の PR #67（マージ済み）。根拠は [research/runtime-fit-audit-2026-10-27.md](research/runtime-fit-audit-2026-10-27.md)。この周の準備は factory-notes の `laps/lap-13/` までで、build・replicate・ship は事前登録を人が見てから別のタスクで流す。
+
+### D13-2: base は runtime の `003efef`（修正の親）にする
+
+題材 A の修正は runtime の `b6ad40a`（#242）と同じ内容の `263ff3f`。どちらの親も `003efef`（`feat(terminal): support herdr 0.9.x (wire protocol 22) (#238)`）なので、これを approved base にする。修正の本体は `runner.py` の正規表現と復号の約 20 行で、題材の実体は 1 か所。
+
+### D13-3: 見せる範囲は `runner.py` の 7 範囲 + `docs/cli.md:1-160` + 試験の 3 範囲にする（約 81,000 字）
+
+追跡ファイルは 152 本で、`runner.py` だけで 166,147 字あり、全部は 200,000 字の上限を超える。pane id の読み方（`_parse_pane_id` ほか）、同点の決め方（`choose_split`）、`build_plan` 全体、CLI の入口、文書、既存の試験の見本を残した。範囲の外は drafter と分類器に見えず、builder には見える。見落としうる手がかり（`terminal/herdr.py`、`broker/`、ほかの試験など）は runbook に列挙した。費用が高ければ試験・文書・`build_plan` の順に削る（runbook）。
+
+### D13-4: 出荷先は `003efef` までの object だけを持つ使い捨ての repository にする
+
+runtime の GitHub から clone せず、`git init` の後に `003efef` だけを fetch する。clone すると修正の object が入り、builder が `git log --all` で答えを読める。出荷（`run`）は `main` の ff-only で、runtime の GitHub には何も push しない。`replicate` を先に流し、`run` を後に流す（`run` が HEAD を進めるため）。
+
+### D13-5: 費用の実測は準備で行わず、人が sandbox の外で 1 回流す。上限は実測の後に確定する
+
+準備の作業環境では factory の sandbox（bubblewrap）が入れ子にできず、`draft` が課金の前に失敗した。sandbox を外す許可は無かったので回避せず、見積もり（既存 lap の単価と表示する字数）と、実測後に上限を確定する規則（呼び出しの上限の 70 % 以上なら引き上げ案を採る）を事前登録に置いた。呼び出しの上限と lap の上限 $260 は定数で、$150 は change ごとの `--max-cost` で縛る。分類がシナリオごとに既存コード全体を貼るため、1 つの `draft` が $5 を超える見込みがある。
+
+### D13-6: 事前登録の予測は「80 % を割らない」に倒す
+
+Q（8 build の合格割合の平均）の予測は点 94 %、範囲 82〜100 %、80 % を割る確率 15 %。落ちるなら依存の解決（lap を無効にする）、CLI の終了コード、生成ファイルの差分、base の移動の順に見る。成功の線は Q ≥ 80 %、8 build 中 7 本以上が起動、lap を無効にする不具合が無い、`run` が ff-only で出荷、の全部。Q は較正と同じ式だが同じ測定ではない（run の手、既存コードの拡張、1 組、K=8、短い依頼）ので、80 % の線に照らす目安として読む。題材 A は公開済みの変更の後戻りの再現で、model が答えを知っている可能性と、builder の網が切れていないことによる経路を、事前登録に書いた。
