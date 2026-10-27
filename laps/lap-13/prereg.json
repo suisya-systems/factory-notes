@@ -1,0 +1,152 @@
+{
+  "note": "lap 13 pre-registration (written before any build; approvedVersions are filled at the entrance approval of runbook step 8 and committed before any replicate or run; cost.caps.confirmed is set to true at runbook step 7 after the measured draft). Procedure and the measured/unmeasured status of every number: laps/lap-13/runbook.md. Form: lap 8's (note, k, requests, approvedVersions, lines) plus the fields a single-subject lap needs. The prediction is written first and is not changed afterwards; a changed rule is added as a new line in 'amendments' with the reason, never edited in place.",
+  "k": 8,
+  "runs": 1,
+  "builder": "claude-opus-5-5",
+  "subject": {
+    "id": "A",
+    "title": "herdr pane ids past the ninth pane: `dispatcher delegate-plan` accepts them (runtime #240, fixed in v0.1.50 by b6ad40a / #242)",
+    "request": "laps/lap-13/requests/herdr-pane-id.md",
+    "requestWords": 487
+  },
+  "requests": {
+    "herdr-pane-id": {
+      "replicate": "herdr-a-rep",
+      "run": "herdr-a-run",
+      "sets": 1
+    }
+  },
+  "approvedVersions": {},
+  "base": {
+    "repo": "suisya-systems/claude-org-runtime",
+    "commit": "003efefd537f1d7f67d47f19f654a3b451de298f",
+    "commitSubject": "feat(terminal): support herdr 0.9.x (wire protocol 22) (#238)",
+    "isParentOf": ["b6ad40a3c4ea4ef636a931cf3f9c91f2ee597dd7", "263ff3fac0df20a1c062a0518ab7520e49e48c1e"],
+    "shipTarget": "disposable local repository: only 003efef and its ancestors, branch main, clean, no remote (runbook step 4); runtime's GitHub main is never pushed to",
+    "paths": [
+      "src/claude_org_runtime/dispatcher/runner.py:84-100",
+      "src/claude_org_runtime/dispatcher/runner.py:499-528",
+      "src/claude_org_runtime/dispatcher/runner.py:589-866",
+      "src/claude_org_runtime/dispatcher/runner.py:2279-2349",
+      "src/claude_org_runtime/dispatcher/runner.py:2610-3160",
+      "src/claude_org_runtime/dispatcher/runner.py:3213-3266",
+      "src/claude_org_runtime/dispatcher/runner.py:3385-3642",
+      "docs/cli.md:1-160",
+      "tests/test_dispatcher_runner.py:95-125",
+      "tests/test_dispatcher_runner.py:255-330",
+      "tests/test_dispatcher_runner.py:870-1070"
+    ],
+    "shownChars": 81000,
+    "shownCharsNote": "counted with sed over the ranges at 003efef (runner 58,845 + cli.md 10,193 + tests 12,372); draft's own count is the one that decides and must be below 200,000",
+    "rangeRisk": "what lies outside the ranges is invisible to the spec drafter, the scenario drafter and the classifier, and visible to the builder (it works in a clone of the whole repository); see runbook '範囲の外の手がかりを見落とすおそれ'"
+  },
+  "contract": {
+    "file": "laps/lap-13/contract.json",
+    "command": ["python3", "-m", "claude_org_runtime.cli", "dispatcher", "delegate-plan"],
+    "pythonPath": ["src"],
+    "deps": "9d3778c3e9335fda0b852970cca76ee606df561c191071beb796363a3b9b7032",
+    "lock": "laps/lap-13/requirements.lock",
+    "lockPackages": ["attrs==26.1.0", "jsonschema==4.26.0", "jsonschema-specifications==2025.9.1", "referencing==0.37.0", "rpds-py==0.30.0", "typing-extensions==4.16.0"],
+    "python": "/usr/bin/python3 (3.10.12 on the preparation host)",
+    "depsRoot": "/opt/factory-deps (root-owned after runbook step 3)",
+    "dateNote": "the lock pins the versions current on 2026-10-27, not those of the base's date (2026-10-11); jsonschema>=4.18 is the only constraint runtime states"
+  },
+  "factory": {
+    "repo": "suisya-systems/factory",
+    "commit": "fea10ee3a95d894bd45b104cd12255eddcedfcd9",
+    "note": "PR #67; a later commit is allowed only if the change is a cost-cap constant (runbook step 7) and is named in amendments"
+  },
+  "prediction": {
+    "side": "does-not-drop-below-80",
+    "sideJa": "割らない",
+    "q": {
+      "metric": "Q = mean over the 8 builds of (scenarios passed / scenarios of herdr-a-rep that the build was scored on); a build that did not start counts 0 and is reported apart; flakes are left out as in flakeRule",
+      "pointPct": 94,
+      "rangePct": [82, 100],
+      "pBelow80": 0.15,
+      "pAtCeiling": 0.45,
+      "ceilingNote": "ceiling = Q >= 95 (calibrate-80's ceilingPct); the calibration found no opus Q below 90.6 on greenfield HTTP apps, and this request states every rule of the change (the table, the order, the digits-only case, the refusals)"
+    },
+    "whereItFalls": {
+      "note": "Where the first failing scenario of a build is expected, as probabilities that at least one build (of 8) fails at least one scenario for that reason. They do not sum to 1. 'dependency' and 'base' are lap-invalidating (an infrastructure fault, not a builder verdict); 'exit' and 'files' are builder verdicts.",
+      "sites": [
+        {
+          "site": "dependency-resolution",
+          "p": 0.15,
+          "how": "the set resolves but `python3 -m claude_org_runtime.cli` fails to start inside the run sandbox ($HOME and /tmp hidden, no network) for a reason the host smoke did not show (an import of jsonschema/rpds-py, a path the CLI reads at start); it would fail every scenario of every build alike (Q near 0, all builds)",
+          "reading": "if it happens the lap is invalid, not 'below 80'; fix the set or the contract and rerun the replicate with a new change id"
+        },
+        {
+          "site": "base-move",
+          "p": 0.05,
+          "how": "the ship target is not at the approved base when replicate starts (it was used by a run first, or fetched into), or the approved version and the repository disagree; replicate refuses to start (no spend) or a build starts from a moved base",
+          "reading": "refusal before any build is a procedure fault; a build from a moved base cannot happen (replicate pins every clone to the approved base)"
+        },
+        {
+          "site": "cli-exit-code",
+          "p": 0.35,
+          "how": "a build changes the pane-id parsing correctly but alters which input is refused (exit 1) or planned (exit 0), e.g. keeps `p10` as decimal ten, accepts `w1:pa`, or lets an unparsed id through to build_plan so a refused layout exits 0 or 2",
+          "reading": "the most likely single place for a builder-caused failed scenario; the request states the three cases, so most builds should pass them"
+        },
+        {
+          "site": "generated-file-diff",
+          "p": 0.2,
+          "how": "a scenario reads a file written under --state-dir (the worker seed or instruction) or compares stdout field by field, and a build's change moves a field the scenario treats as fixed (for example the target name chosen between `w1:p9` and `w1:pA`); or a scenario reads a file the program writes only when not in --dry-run and the drafters mis-assumed the template path (an expectation error, not a builder failure)",
+          "reading": "expectation errors found at approval or in the failed scenarios go to errors.json and out of Q"
+        }
+      ],
+      "firstToFall": "cli-exit-code",
+      "firstToFallNote": "if Q is below 80, the order of expected causes is: dependency-resolution (infrastructure), cli-exit-code, generated-file-diff, base-move"
+    },
+    "run": {
+      "pShipped": 0.8,
+      "attemptsExpected": "1 or 2 of at most 5",
+      "note": "`run` needs the LLM judge to accept as well as every scenario; ship is the fast-forward of the disposable ship target only"
+    }
+  },
+  "successLine": {
+    "text": "The lap 'held' (factory carried over to an existing Python repository) when all of: (1) Q >= 80 %; (2) at least 7 of the 8 builds started (builderOk); (3) no lap-invalidating fault (dependency-resolution or base-move) in any scored scenario; (4) the run shipped: herdr-a-run ended with a fast-forward of the ship target whose new HEAD is the judged commit and which has 003efef as an ancestor. Otherwise 'did not hold', and the report names the site of the first failure by the whereItFalls list. A lap-invalidating fault is not a verdict on the builder: it is reported as invalid and the replicate is run again under a new change id after the fault is fixed.",
+    "qPct": 80,
+    "minStartedBuilds": 7,
+    "runMustShip": true,
+    "linesNote": "lap 8's effectPts/nullPts lines are for contrasts between arms; there is one arm here, so they are not used"
+  },
+  "cost": {
+    "lapCapUsd": 150,
+    "lapCapNote": "the factory's own lap cap is a constant ($260, CAPS.lapCostUsd); $150 is held by the per-change caps below and by reading lap-ledger.jsonl after every step",
+    "perChangeCapsUsd": { "herdr-a-rep (replicate --max-cost)": 70, "herdr-a-run (run --max-cost)": 30, "herdr-a-measure (draft, constant)": 10 },
+    "stopLineUsd": 150,
+    "expectedUsd": { "low": 30, "high": 80, "basis": "runbook '費用の見積もり'; extrapolated from calibrate-80 l3-report unit costs and the number of characters shown; not measured" },
+    "caps": {
+      "confirmed": false,
+      "current": { "specDrafterCallUsd": 1, "scenarioDrafterCallUsd": 1, "classifierCallUsd": 0.5, "draftChangeUsd": 10 },
+      "proposedIfMeasuredAbove70Pct": { "specDrafterCallUsd": 2, "scenarioDrafterCallUsd": 2, "classifierCallUsd": 1, "draftChangeUsd": 15 },
+      "measuredPerCallUsd": { "specDrafter": null, "scenarioDrafter": null, "classifier": null },
+      "rule": "after the measured draft (runbook step 6): a role whose measured call is at or above 70 % of its current cap gets the proposed value (a factory constant change, runbook step 7); below 70 % the current value stays. The values are fixed here and 'confirmed' set to true before the first main draft.",
+      "constants": "src/roles.ts draftTask maxCostUsd; src/classify.ts CLASSIFIER_BUDGET.maxCostUsd; src/limits.ts CAPS.maxCostUsd"
+    }
+  },
+  "errorsRule": "Errors rule (lap 8, restated): an expected value that contradicts the request, or a count or number that does not add up, is an expectation error; so is a run step whose expectation depends on a file or a template path the shown ranges do not give (the drafters could not know it). Each is listed in errors.json with a quote of the request; the whole scenario is left out of every build's pass fraction. Q is reported both raw and corrected; if they fall on different sides of 80 %, the verdict is 'undecided', not either.",
+  "flakeRule": "Flake rule (lap 12, restated): each build is rescored twice after its first judgement (replicate --rescore twice, judgements = 3). A (scenario, build) whose pass/fail differs among the 3 is a flake and is left out of that build's pass fraction (numerator and denominator). More than 5 % of the cells being flakes gives no verdict.",
+  "judgements": 3,
+  "maxFlakePct": 5,
+  "comparability": {
+    "summary": "Q here uses the same formula as calibrate-80 (mean over builds of a build's pass fraction), but it is not the same measurement; it is read as indicative against the 80 % line, not as a point on the calibration curve.",
+    "differences": [
+      "a command-line program with `run` steps (exit code, stdout/stderr JSON, files), not an HTTP app; the scenarios check an envelope, not a response",
+      "an extension of an existing repository (152 tracked files); calibration builds started from an empty repository",
+      "K=8 builds of one spec, one scenario set (herdr-a-rep own); calibration used 4 builds x 2 sets (own and cross) per request, and 2-3 sets in lap 8-12",
+      "the scenario count is not fixed in advance (calibration: 11-15 per request); a small count makes each scenario worth more of Q",
+      "the drafters and the classifier saw only the ranges above, the builder the whole repository; calibration drafters saw the whole (empty or small) app",
+      "request size is 487 words, below L0 (694-901 words); the calibration's finding that Q does not fall with size says nothing about a short request on a real repository",
+      "the builder is claude-opus-5-5 as in the calibration; the second model family is not used (no cross-family scenario drafter)",
+      "dependencies are provided from a hash-pinned set outside the sandbox; calibration apps had none"
+    ]
+  },
+  "contamination": {
+    "kind": "reproduction of a published change (back-in-time)",
+    "text": "Subject A is the reconstruction of change #242 / issue #240, which is public in suisya-systems/claude-org-runtime (merged 2026-10-11, released in v0.1.50). A model may have seen the fix, so Q can be an upper bound on what the builder derives from the request alone. The leak paths are: (1) model training data, not testable here; (2) the builder's model call shares the host network (factory README, 'The builder's model session is not cut off from the network'), so a builder could read the published fix; the run contract tells it to install nothing and use no network, but that is an instruction only; (3) the ship target holds no object after 003efef, so the repository cannot give it away. The request itself states the table and the rules (as issue #240 does), so the builder is not asked to rediscover them. No forward-looking subject is used in this lap (open runtime issue #21, ntfy, is the only one in the audit).",
+    "check": "after the replicate, each build's transcript or workspace is searched for a fetch of github.com/suisya-systems/claude-org-runtime or for the commit ids b6ad40a / 263ff3f; any hit is reported and the build is listed apart (Q is given with and without it)."
+  },
+  "amendments": []
+}
