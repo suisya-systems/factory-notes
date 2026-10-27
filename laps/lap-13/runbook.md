@@ -15,7 +15,7 @@
 | base | runtime の `003efef`（`feat(terminal): support herdr 0.9.x (wire protocol 22) (#238)`、2026-10-11）。修正のコミット `b6ad40a`（#242）と `263ff3f` の親 | 下の「題材 A の base」 |
 | 見せる範囲 | `runner.py` の 7 つの行範囲、`docs/cli.md:1-160`、`tests/test_dispatcher_runner.py` の 3 つの行範囲 | 下の「見せる範囲」 |
 | 実行 | 1 つの依頼文から `replicate`（K=8）1 本と、`run` 1 本（出荷先の ff-only） | 下の「流れ」 |
-| 依頼文 | [requests/herdr-pane-id.md](requests/herdr-pane-id.md)（487 語） | 準備で作成 |
+| 依頼文 | [requests/herdr-pane-id.md](requests/herdr-pane-id.md)（495 語） | 準備で作成 |
 
 ## 準備で作ったもの（実測済み）
 

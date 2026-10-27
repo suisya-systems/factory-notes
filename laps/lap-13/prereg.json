@@ -7,7 +7,7 @@
     "id": "A",
     "title": "herdr pane ids past the ninth pane: `dispatcher delegate-plan` accepts them (runtime #240, fixed in v0.1.50 by b6ad40a / #242)",
     "request": "laps/lap-13/requests/herdr-pane-id.md",
-    "requestWords": 487
+    "requestWords": 495
   },
   "requests": {
     "herdr-pane-id": {
