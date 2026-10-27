@@ -156,7 +156,7 @@ npm run factory -- draft herdr-a-measure --request $NOTES/laps/lap-13/requests/h
 ```
 
 - **分類はシナリオごとに 1 回呼ばれ、そのたびに見せた既存コード（約 81,000 字）を入れる**（`src/classify.ts` の `predictInstruction(spec, app, s)`）。シナリオが 12 本なら分類 12 回。この draft の合計は下の見積もりで $5 を超える見込みがあり、$5 を超えると人が判断したら流さずに範囲を削る（下の「費用が大きいときの削り方」）。1 呼び出しの上限は spec drafter $1、scenario drafter $1、分類 $0.5。上限に当たった呼び出しは draft を失敗させる（課金は上限まで）。1 change の既定の上限 $10 も効く。
-- 読む物: `$FACTORY_HOME/runs/herdr-a-measure/draft-cost.json` の `calls`（役・モデル・金額）と `byRoleModel`。呼び出し 1 回あたりの金額を、spec drafter / scenario drafter / 分類（1 回ごと）で表にして、この書類の「費用の実測」に書き込む。
+- 読む物: 1 回ごとの金額は **`$FACTORY_HOME/lap-ledger.jsonl`** の確定の行（`usd` を持つ行。`call` の id で `hold` の行と対になり、`role` が `spec-drafter` / `scenario-drafter` / `classifier`）。`runs/herdr-a-measure/draft-cost.json` の `calls` は役とモデルだけで金額を持たず、`byRoleModel` は役ごとの合計なので、1 回ごとの上限との比べには使えない（合計は検算に使う）。役ごとの最大と平均を表にして、この書類の「費用の実測」に書き込む。
 - この draft は本番の change にはしない（`herdr-a-measure` は承認も run もしない）。
 
 ### 7. 【人】上限を確定する（本番の draft の前）
