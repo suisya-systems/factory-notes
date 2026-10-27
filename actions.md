@@ -24,5 +24,6 @@
 | 公開の準備 | 関連リポジトリを公開する前に、全履歴で秘密情報を点検する。公開の切替はオーナーの最終確認後（[decisions.md](decisions.md)） | 4 リポジトリの全履歴点検を実施し、手元の絶対パスと勤務先メールを全履歴から書き換えて強制 push 済み。オーナーが 4 リポジトリ（factory / factory-notes / factory-practice-memo / factory-practice-split）を公開に切り替えた（gh で PUBLIC を確認済み）。完了 | 2026-10-18 |
 | オーナーの記事 | オーナーが記事を書く | 2026-10-25 の予定 | 2026-10-18 |
 | 13 周目の準備 | runtime の題材 A を `run` の手と hash 固定の依存で回すための準備。lock・wheelhouse・出荷先・依頼文を作り、手順書と事前登録を書いた（[laps/lap-13/](laps/lap-13/)、決定は [decisions.md](decisions.md) の D13-1〜6）。root が要る操作（`/opt/factory-deps`）と費用の実測の `draft`（準備の sandbox では bubblewrap が入れ子にできず未実施）は人が流す。本番の build・replicate・ship は流していない | 準備まで完了。次は人が手順 1〜7 を流し、事前登録を見てから本番を別タスクで | 2026-10-27 |
+| 13 周目の実行と報告 | 窓口がホスト側で実行した 13 周目（2026-10-27）の結果を報告にまとめた（[laps/lap-13/report.md](laps/lap-13/report.md)）。隔離の確認、実測の draft（$6.39）、本番 draft 2 つ、replicate K=8（8 build すべて builderOk、14 / 14 シナリオ、Q 100.0 %、揺れ 0）、`run`（試行 1 回で `003efef` の上に `01eb9cb` を ff-only で出荷）。費用は約 $23.35。学習汚染の事後検査は、builder の transcript が無く fetch は検査できず、出力の差分の検索（0 件）まで。決定は [decisions.md](decisions.md) の D13-7・D13-8 | 完了。判定は held（成功の線の 4 条件を満たした）。次の周は未定（オーナーの判断） | 2026-10-27 |
 
 背景: continuo#275 / rondo#714 / rondo#715 の 3 件は、Claude の呼び出しを Agent SDK に差し替える前に直すもの（[research/adapter-boundary-audit-2026-10-17.md](research/adapter-boundary-audit-2026-10-17.md)）。
