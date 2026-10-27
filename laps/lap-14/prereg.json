@@ -94,7 +94,7 @@
     "repo": "suisya-systems/factory",
     "baseCommit": "fea10ee3a95d894bd45b104cd12255eddcedfcd9",
     "baseNote": "lap 13's commit (PR #67). Lap 14 runs on a later commit that contains the four changes of laps/lap-14/factory-issues.md (1 transcript, 2 cost constants, 3 expect.jsonAbsent, 4 run + fake service); implemented by a separate worker (owner decision 2026-10-27). The commit is filled in 'commit', and named in 'amendments', when all four are merged (runbook step 0); lap 14 does not start before.",
-    "commit": null,
+    "commit": "da0d909",
     "prerequisites": [
       "1. builder transcript saved under $FACTORY_HOME/transcripts/<change>/ (factory-issues.md section 1; the contamination check reads it)",
       "2. cost constants: classifier 0.5 -> 1, draftTask 1 -> 2, CAPS.maxCostUsd 10 -> 40 (factory-issues.md section 2; owner's values, draft cap raised from 25 to 40 on 2026-10-27). Extrapolated: a draft of about 45 scenarios costs about 29 (range 20-40)",
@@ -227,7 +227,7 @@
       "capWarning": "the draft cap is $40 (owner), against an extrapolated draft cost of about $29 at 45 scenarios (range 20-40); a draft that reaches the cap fails mid-spend. Runbook step 5 stops the lap if the first draft fails for cost or its ledger shows more than $35"
     },
     "caps": {
-      "confirmed": false,
+      "confirmed": true,
       "current": {
         "specDrafterCallUsd": 1,
         "scenarioDrafterCallUsd": 1,
@@ -276,5 +276,11 @@
     "check": "after the replicate and the run, every builder transcript under $FACTORY_HOME/transcripts/<change>/ (factory prerequisite 1) is searched; the commands are in runbook step 10. Search terms: `github.com/suisya-systems/claude-org-runtime`, `raw.githubusercontent`, `pypi.org`, `pip download`, `pip install`, `git fetch`, `git log --all`, the commit ids b6ad40a / 263ff3f / 410fd8a / 176bcf1 / a021ebd / 719f865 / f79286f, the tags v0.1.50 / v0.1.51, the issue numbers #240 / #242 / #244 / #245, and the tool names WebFetch / WebSearch. Any hit lists the build apart and Q is given with and without it. A transcript that is missing for a build is itself reported (the check is then incomplete, not clean). The check is on the transcript, the output-side search over the build's diff (as in lap 13) is run too.",
     "ifPrerequisite1IsNotMerged": "the lap does not start (runbook step 0). A lap run without transcripts would repeat lap 13's 'half-checked' result."
   },
-  "amendments": []
+  "amendments": [
+    {
+      "date": "2026-10-27",
+      "before": "draft",
+      "what": "factory at da0d909 (PR #68, the 4 prerequisite changes); constants checked: classifier 1, drafter 2, CAPS.maxCostUsd 40; caps confirmed. PR #68 CI: 292 tests pass with real bubblewrap."
+    }
+  ]
 }
