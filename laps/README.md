@@ -4,6 +4,8 @@
 
 `lap-13/` は 13 周目の準備で、runtime の既存コードの変更に工場を当てる周の手順書（`lap-13/runbook.md`）、事前登録（`lap-13/prereg.json`）、依頼文（`lap-13/requests/`）、依存の lock と contract を置いた（準備の時点では本番を流していない）。13 周目の実行の報告は `lap-13/report.md`: 8 build すべて 14 / 14 シナリオを通り（Q 100.0 %）、`run` も 1 回で出荷して、成功の線の 4 条件を満たした（判定は held）。学習汚染の事後検査は、builder の transcript が無く、出力の差分の検索（0 件）までしかできなかった。
 
+`lap-14/` は 14 周目の準備で、13 周目が小さすぎた（Q 100 %）ことを受けて、題材 A・B・C を 1 本の依頼（1,658 語）にして成功の線 Q 90 % で測る周の手順書（`lap-14/runbook.md`）、設計（`lap-14/design.md`。base を 1 つにできることの確認を含む）、事前登録（`lap-14/prereg.json`）、依頼文（`lap-14/requests/`）、contract・lock、工場への Issue 案 4 本（`lap-14/factory-issues.md`）を置いた。本番は流していない。
+
 これらは 2026-10-18 に工場のリポジトリ（suisya-systems/factory）の `docs/` から、コミット 4558260 の時点の内容のまま移した。工場のリポジトリは英語の本文と機能だけを持つ方針にしたため。
 
 ## 読むときの注意
