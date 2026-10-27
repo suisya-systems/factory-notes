@@ -18,7 +18,7 @@
 | 依存 | [requirements.lock](requirements.lock)。13 周目の lock と同一（sha256 `9d3778c3…7032` を確認）。`/opt/factory-deps` の 13 周目の環境をそのまま使う | 実測 |
 | 成功の線 | Q ≥ 90 %、8 build 中 7 本以上が起動、周を無効にする不具合なし、`run` の出荷（オーナー: 出荷も残す） | [prereg.json](prereg.json) |
 | 予測 | 割らない（点 93 %、範囲 80〜100 %、90 % を割る確率 0.35） | 事前登録 |
-| 費用 | 期待 $55〜110、上限は仮に $150 | 外挿。未測定 |
+| 費用 | 期待 $55〜110、lap 全体の上限 $200（オーナー決定）、1 つの draft の上限 $40 | 外挿。未測定 |
 | 工場の変更 | 4 本（transcript、費用の定数、`expect.jsonAbsent`、`run` と偽サービス）。別ワーカーが実装。**4 本がマージされるまで周を始めない** | Issue 案のみ |
 
 **測れなかったこと**（準備の作業環境では factory も model CLI も動かない）:
@@ -46,7 +46,7 @@ export FACTORY_DEPS=/opt/factory-deps
 - [factory-issues.md](factory-issues.md) の 1〜4 がすべて factory にマージされ、`$FACTORY` がその commit である。**1 つでも欠けるなら周を始めない。** 欠けたときの扱い: 3（`jsonAbsent`）だけが欠けるなら、窓口の判断で、B の record の不在を測らない形に事前登録を直して（`prediction` の `record-revocation` を除き、`amendments` に書く）から始めてよい。1・2・4 が欠ける場合は始めない（1: 汚染の検査が半分になる。2: draft が上限で失敗する。4: C のシナリオが書けない）。
 - `cd $FACTORY && git log -1 --oneline`。この commit を [prereg.json](prereg.json) の `factory.commit` に書き、`amendments` に 1 行足して commit する。
 - `npm ci --ignore-scripts && npm test` が通る。
-- 定数の確認: `grep -n "maxCostUsd" $FACTORY/src/roles.ts $FACTORY/src/classify.ts`、`grep -n "CAPS = " $FACTORY/src/limits.ts`。分類 1、drafter 2、draft 全体 25 であること。一致したら [prereg.json](prereg.json) の `cost.caps.confirmed` を `true` にして commit する。
+- 定数の確認: `grep -n "maxCostUsd" $FACTORY/src/roles.ts $FACTORY/src/classify.ts`、`grep -n "CAPS = " $FACTORY/src/limits.ts`。分類 1、drafter 2、draft 全体 40 であること。一致したら [prereg.json](prereg.json) の `cost.caps.confirmed` を `true` にして commit する。
 - 4 の確かめ（モデルを呼ばない）: 工場の試験に、プログラムのシナリオで `service` の手が通る試験が入っていること。可能なら、factory の試験の出力で「run と service の組」の試験名を控える。
 - `claude` にログインしてある。`bwrap --ro-bind / / true` が通る（入れ子の sandbox の中では通らない）。
 
@@ -107,7 +107,7 @@ npm run factory -- draft runtime-abc-rep --request $REQ --base $SHIP "${BP[@]}" 
 
 - draft の出力の「shown chars」が 200,000 字未満であること。事前登録の 143,200 字との差を記録する。
 - **draft が終わったら、承認や次の draft の前に費用を読む**: `$FACTORY_HOME/lap-ledger.jsonl` の確定の行（`usd` を持つ行、`role` が `spec-drafter` / `scenario-drafter` / `classifier`）から、役ごとの 1 呼び出しの最大と平均、分類の回数（= シナリオの本数）、合計。[prereg.json](prereg.json) の `cost.expectedUsd.lines` の draft の行（$20〜40）と比べる。
-- **止める線**: (a) draft が上限（$25）に当たって失敗した、(b) 合計が $35 を超えた、(c) シナリオが 55 本を超えた、(d) 分類の 1 呼び出しが $0.8 を超えた、のどれかなら、次の draft の前に窓口へ報告して止まる。窓口は、上限を上げる（別ワーカーの定数変更。外挿では $40）、見せる範囲を削る（後述）、依頼を縮める、のどれかを人に諮る。
+- **止める線**: (a) draft が上限（$40）に当たって失敗した、(b) 合計が $35 を超えた、(c) シナリオが 55 本を超えた、(d) 分類の 1 呼び出しが $0.8 を超えた、のどれかなら、次の draft の前に窓口へ報告して止まる。窓口は、見せる範囲を削る（後述）、依頼を縮める、上限をさらに上げる（別ワーカーの定数変更）、のどれかを人に諮る。
 - 削る順（影響が小さい順）: `tests/test_spawn_prompt.py:1-200`（7,003 字）、`classifier.py:535-710`（6,089 字）、`classifier.py:777-816`（1,334 字）、`runner.py:2610-3160`（`build_plan`、27,224 字。最後）。範囲を変えると承認の版（`paths`）も変わり、事前登録の `base.paths` と `shownChars` を書き換える（承認の前に `amendments`）。
 
 ### 6. 【費用】本番の draft（run）
@@ -189,8 +189,8 @@ npm run factory -- run runtime-abc-run --ship-target $SHIP --max-cost 50
 [prereg.json](prereg.json) の `cost.expectedUsd` を参照。要点:
 
 - 13 周目の実測（draft rep $6.30、draft run $6.08、build $0.40〜0.51、run $0.58、probe $0.35）を、見せる字数 1.77 倍（分類は 1 呼び出し $0.33 → $0.58）、シナリオ本数 約 3 倍、builder 費用 3〜4 倍で伸ばした。分類が費用を支配する（シナリオごとに 1 回、各回に全文を入れる）。
-- draft 2 本（rep と run）で $40〜80、replicate $10〜20、run $2〜8、probe $0.4。合計 $55〜110。上限は仮に $150（`--max-cost`: replicate $70、run $50。lap 台帳を各段の後に見る）。
-- **1 つの draft の上限 $25（オーナーの値）は、シナリオ 45 本の外挿（約 $29）を下回る。** 手順 5 の止める線を置いた。上限を上げるか否かは人の判断。
+- draft 2 本（rep と run）で $40〜80、replicate $10〜20、run $2〜8、probe $0.4。合計 $55〜110。上限は $200（オーナー決定。`--max-cost`: replicate $70、run $50。lap 台帳を各段の後に見る）。
+- **1 つの draft の上限は $40（オーナー決定）。** シナリオ 45 本の外挿（約 $29、範囲 $20〜40）の上端に近いので、手順 5 の止める線（合計 $35 超で報告）を残した。
 
 ## 残る懸念（準備の時点）
 
@@ -198,6 +198,6 @@ npm run factory -- run runtime-abc-run --ship-target $SHIP --max-cost 50
 2. **draft が未実行。** 依頼文がどのくらいの本数のシナリオになるか、`unstated` がどのくらい出るか、契約のコマンドを `python3 -m claude_org_runtime.cli` までにした形が受け入れられるかは、手順 5〜7 で初めて分かる。受け入れられない場合の代案: 依頼を 2 つの change に分ける（Q が 1 つにならない。窓口に戻す）。
 3. **C の仕様の一部は準備担当が決めた**（設定のキー名、既定値、Priority の対応、失敗の扱い）。issue #21 が決めていないので、オーナーの確認を要する（[design.md](design.md)）。変えるなら依頼文と事前登録を直し、承認の前に行う。
 4. **学習汚染**: A・B は公開済みの変更の再現、C は前向き（ただし ntfy の API は公開の知識）。transcript で fetch・pip・git の経路は検査できるが、学習データの経路は検査できない。
-5. **lap の上限 $150 は定数でなく運用で守る**（13 周目の「残る懸念」5）。
+5. **lap の上限 $200 は定数でなく運用で守る**（13 周目の「残る懸念」5）。
 6. **B の `decided_at_ms` は時計に依る。** 確かめるのは両方の項目が整数であることだけ。時計を直接使う期待値は期待値の誤りとして除く規則を事前登録に置いた。
 7. **見せる範囲を 13 周目より絞った**（`docs/cli.md` と `tests/test_dispatcher_runner.py` を外した）。A のシナリオの期待値の誤りが増えるおそれがある。
