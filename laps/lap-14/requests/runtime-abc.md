@@ -1,6 +1,6 @@
-# Request: `delegate-plan` accepts pane ids past the ninth pane, and `spawn-prompt-step` keeps a decision record
+# Request: pane ids past the ninth pane, a decision record for `spawn-prompt-step`, and an ntfy sink for attention notifications
 
-Two changes to the dispatcher commands of `claude-org-runtime`. They touch the same plan output, so they are one request.
+Three changes to `claude-org-runtime`. The first two touch the same plan output, so they are written together; the third is a separate command.
 
 ## Part 1. herdr pane ids past the ninth pane
 
@@ -46,11 +46,34 @@ Document the new options and the record format in `docs/cli.md`.
 
 `delegate-plan` already puts the approval step into the plan it prints (the step `approve_spawn_prompts`, with a `decide_argv` list that starts with `spawn-prompt-step`, `--deadline-ms` and its value). That list gains `--target <name>`, `--task-id <task id>` and `--state-dir <dir>`, after the deadline: the name is the name of the pane being spawned (the `name` of the plan's `spawn`), the task id is the task's, and the directory is the `--state-dir` of the `delegate-plan` call. The list is the same for the renga and the broker transport, and for plans with a lettered pane id in the layout.
 
+## Part 4. an optional ntfy sink for attention notifications
+
+`claude-org-runtime attention scan` (and `attention watch`, which runs the same cycle repeatedly) tells the operator about attention events: a log line on standard output, a desktop notification, a bell. The attention config file (`--config`, the same JSON that holds `desktop`, `sound`, `cooldown_sec`, `templates`) gets one optional external sink, [ntfy](https://docs.ntfy.sh/publish/). It is opt-in, and it must not change what the local notifications do.
+
+Config. A new optional object `ntfy` with these keys:
+
+- `enabled`: boolean, default `false`. With `ntfy` absent or `enabled` false nothing changes anywhere.
+- `server`: string, default `https://ntfy.sh`.
+- `topic`: string, required when `enabled` is true; 1 to 64 characters, letters, digits, `_` and `-` only.
+- `max_body_chars`: integer of at least 1, default 120 (shorter than the desktop body, whose default limit is 240).
+
+A wrong type, a missing or malformed topic with `enabled` true, or an unknown key inside `ntfy` is a config error, handled like the other config errors (message on standard error, exit code 2).
+
+Sending. For each event that the cycle notifies locally (not suppressed, not skipped by the cooldown or the dedup state), when the sink is enabled and the run is not `--dry-run`, the program sends one HTTP POST to `<server>/<topic>` (a trailing `/` on `server` is ignored). The body is the event's rendered body, the text the desktop notification would show after the template and the existing truncation, cut again to `max_body_chars` by the existing truncation rule (the last kept character is the ellipsis), with control characters removed as for the desktop. Two headers carry the rest: `Title` is the rendered title, and `Priority` is `5` for an `urgent` event and `3` for a `normal` one. Nothing else of the event goes out: no task id, summary, key or other field, no extra header, unless the template put it into the title or body. With `--dry-run` no request is made.
+
+Failures. A connection error, a timeout (5 seconds) or an HTTP status of 400 or more is reported as one line on standard error that starts with `warning: ntfy notification failed` and is then swallowed: the exit code, the standard output, the local notifications and the dedup state are what they would be without the sink. `--json` output does not change.
+
+Not decided here, left to you (keep it simple, do not add features for them): authentication or tokens, the other sinks of the same family (Slack, Discord, Gotify, Pushover), retrying a failed send, filtering by event kind, ntfy tags or click actions.
+
 ## Checks the result should pass
 
 - With `--transport renga`: a layout with workers on `w1:p9` and `w1:pA` of the same size gets its spawn planned (exit 0), and the pane of `w1:p9` is the one that is split; a layout with `w1:p0` and `w1:p11` of the same size splits `w1:p0`.
 - With either transport, a layout with a pane `w1:pA` is accepted (exit 0), and one with a pane `w1:pI` or `w1:pa` is refused with exit code 1.
 - After a `delegate-plan` run, the `decide_argv` of the plan carries the three new options with the pane name, task id and state directory of that run.
 - `spawn-prompt-step --target worker-t1` on a screen that needs a key writes a record whose `send_keys` equals the printed `send_keys`; on a later pass with a screen that says to wait, the record is gone; on a pass with input that is not valid JSON, it is gone too.
-- A `done` screen writes a record with `action` `done` and `send_keys` `null`; `expires_at_ms - decided_at_ms` is 30000.
+- A `done` screen writes a record with `action` `done` and `send_keys` `null`, and both `decided_at_ms` and `expires_at_ms` are integers.
 - A target such as `../x` or `.hidden` exits 2 and leaves any existing file alone.
+- `attention scan` with a pending decision that is old enough to be urgent, desktop notifications off, sound off and `ntfy` enabled with a topic, against a server that answers 200: the server received exactly one POST to `/<topic>` whose `Title`, `Priority` (`5`) and body match the local notification, and the exit code is 0. Run again with the same state directory, the cooldown stops it, and the server receives nothing more.
+- The same scan with `ntfy` absent, or with `enabled` false, or with `--dry-run`: the server receives nothing.
+- The same scan with the server answering 500, or with nothing listening at `server`: exit code 0, one `warning: ntfy notification failed` line on standard error, the same standard output as without the sink.
+- A config with `ntfy.topic` `"a b"` while enabled, or with an unknown key inside `ntfy`, exits 2.

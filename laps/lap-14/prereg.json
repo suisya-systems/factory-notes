@@ -1,26 +1,32 @@
 {
-  "note": "lap 14 pre-registration (written before any draft or build; approvedVersions are filled at the entrance approval of runbook step 7 and committed before any replicate or run; cost.caps.confirmed is set to true at runbook step 4 after the factory constants are merged). Procedure and the measured/unmeasured status of every number: laps/lap-14/runbook.md. Form: lap 13's. The prediction is written first and is not changed afterwards; a changed rule is added as a new line in 'amendments' with the reason, never edited in place. Every number marked 'extrapolated' is not measured.",
+  "note": "lap 14 pre-registration (written before any draft or build; approvedVersions are filled at the entrance approval of runbook step 7 and committed before any replicate or run; cost.caps.confirmed is set to true at runbook step 0 after the factory constants are merged). Procedure and the measured/unmeasured status of every number: laps/lap-14/runbook.md. Form: lap 13's. The prediction is written first and is not changed afterwards; a changed rule is added as a new line in 'amendments' with the reason, never edited in place. Every number marked 'extrapolated' is not measured.",
   "k": 8,
   "runs": 1,
   "builder": "claude-opus-5-5",
   "subject": {
-    "id": "A+B",
-    "title": "A: herdr pane ids past the ninth pane in `dispatcher delegate-plan` (runtime #240, v0.1.50, b6ad40a / #242). B: `dispatcher spawn-prompt-step` writes a target-bound decision record, and `delegate-plan` passes the target in `decide_argv` (runtime #244, v0.1.50, 410fd8a / #245)",
-    "request": "laps/lap-14/requests/herdr-pane-id-and-spawn-record.md",
-    "requestWords": 1082,
-    "requestWordsNote": "wc -w. lap 13: 495. calibrate-80: L0 694-901, L1 1,614-1,798. Aimed at about 900; 20 % over.",
-    "partsOfTheRequest": ["Part 1 (A, 4 rules)", "Part 2 (B, 3 options + record + removal + write failure)", "Part 3 (the two together: decide_argv)"]
+    "id": "A+B+C",
+    "title": "A: herdr pane ids past the ninth pane in `dispatcher delegate-plan` (runtime #240, v0.1.50, b6ad40a / #242). B: `dispatcher spawn-prompt-step` writes a target-bound decision record and `delegate-plan` passes the target in `decide_argv` (runtime #244, v0.1.50, 410fd8a / #245). C: an optional ntfy sink for `attention scan` notifications (runtime open issue #21; not implemented at any commit)",
+    "request": "laps/lap-14/requests/runtime-abc.md",
+    "requestWords": 1658,
+    "requestWordsNote": "wc -w. lap 13: 495. calibrate-80: L0 694-901, L1 1,614-1,798, L2 2,385-2,693. Inside L1's line.",
+    "partsOfTheRequest": [
+      "Part 1 (A, 4 rules)",
+      "Part 2 (B, 3 options, record, removal, write failure)",
+      "Part 3 (A and B together: decide_argv)",
+      "Part 4 (C: ntfy config, sending, failures, 'Not decided here')"
+    ],
+    "tiesBetweenParts": "A-B: 1 (decide_argv). C: none (a separate command). Fewer than calibrate-80's L1 (10-12 cross rules); see comparability."
   },
   "requests": {
-    "herdr-pane-id-and-spawn-record": {
-      "replicate": "runtime-ab-rep",
-      "run": "runtime-ab-run",
+    "runtime-abc": {
+      "replicate": "runtime-abc-rep",
+      "run": "runtime-abc-run",
       "sets": 1
     }
   },
   "approvedVersions": {
-    "runtime-ab-rep": null,
-    "runtime-ab-run": null,
+    "runtime-abc-rep": null,
+    "runtime-abc-run": null,
     "note": "null until runbook step 7; committed before any replicate or run"
   },
   "base": {
@@ -31,8 +37,10 @@
       "b6ad40a3c4ea4ef636a931cf3f9c91f2ee597dd7",
       "263ff3fac0df20a1c062a0518ab7520e49e48c1e"
     ],
-    "isAncestorOf": ["410fd8af8567c87f2d645f46b2c7d16b4f0b5047"],
-    "oneBaseCheck": "the diff of 410fd8a (B) applies to 003efef with `patch -p1 --dry-run` (line offsets only: runner.py -9, tests/test_dispatcher_runner.py -22), checked 2026-10-27 on a git-archive of 003efef; so A and B share one base",
+    "isAncestorOf": [
+      "410fd8af8567c87f2d645f46b2c7d16b4f0b5047"
+    ],
+    "oneBaseCheck": "003efef holds none of A, B, C. A: b6ad40a's parent. B: the diff of 410fd8a applies to 003efef with `patch -p1 --dry-run` (line offsets only: runner.py -9, tests/test_dispatcher_runner.py -22; checked 2026-10-27 on a git-archive of 003efef). C: no commit has ntfy (`git grep -i ntfy` 0 lines at 003efef and at 719f865), and src/claude_org_runtime/attention and tests/attention are identical at 003efef and 719f865. One base, no prerequisite stated in the request.",
     "shipTarget": "disposable local repository: only 003efef and its ancestors, branch main, clean, no remote (runbook step 2); runtime's GitHub main is never pushed to",
     "paths": [
       "src/claude_org_runtime/dispatcher/runner.py:84-100",
@@ -43,22 +51,30 @@
       "src/claude_org_runtime/dispatcher/runner.py:2610-3160",
       "src/claude_org_runtime/dispatcher/runner.py:3213-3266",
       "src/claude_org_runtime/dispatcher/runner.py:3385-3642",
-      "docs/cli.md:1-160",
       "src/claude_org_runtime/dispatcher/spawn_prompt.py",
-      "tests/test_dispatcher_runner.py:95-125",
-      "tests/test_dispatcher_runner.py:255-330",
-      "tests/test_dispatcher_runner.py:870-1070",
-      "tests/test_spawn_prompt.py"
+      "tests/test_spawn_prompt.py:1-200",
+      "src/claude_org_runtime/attention/notify.py",
+      "src/claude_org_runtime/attention/config.py",
+      "src/claude_org_runtime/attention/cli.py",
+      "src/claude_org_runtime/attention/classifier.py:75-345",
+      "src/claude_org_runtime/attention/classifier.py:535-710",
+      "src/claude_org_runtime/attention/classifier.py:777-816"
     ],
-    "shownChars": 117500,
-    "shownCharsNote": "counted with sed and wc -c over the ranges at 003efef (runner 58,845 + 3,349; cli.md 10,193; test_dispatcher_runner 12,372; spawn_prompt.py 13,599; test_spawn_prompt.py 19,122); the draft's own count is the one that decides and must be below 200,000. lap 13: 81,000",
-    "rangeRisk": "what lies outside the ranges is invisible to the spec drafter, the scenario drafter and the classifier, and visible to the builder; see laps/lap-14/design.md and laps/lap-13/runbook.md 'range risk'. New for B: the `--state-dir` value that delegate-plan puts into decide_argv (verbatim or normalised) is read from build_plan (shown), but the CLI argument parsing that turns it into a Path is in the range 3385-3642 (shown)"
+    "shownChars": 143200,
+    "shownCharsNote": "counted with sed and wc -c over the ranges at 003efef (runner 58,845 + 3,349; spawn_prompt.py 13,599; test_spawn_prompt 7,003; attention notify 13,021, config 14,126, cli 15,596, classifier 10,259 + 6,089 + 1,334); the draft's own count is the one that decides and must be below 200,000. lap 13: 81,000. Left out against lap 13: docs/cli.md:1-160 (10,193) and the three ranges of tests/test_dispatcher_runner.py (12,372)",
+    "rangeRisk": "what lies outside the ranges is invisible to the drafters and the classifier, visible to the builder. Left out on purpose: the delegate-plan doc and its CLI tests (the drafters read build_plan instead; an expectation error is possible), attention/dedup.py (the cooldown rule: a scenario that runs a second scan relies on the request's sentence, not on the code), attention/readers.py and platform.py (the drafters cannot see how state.db or the backend is chosen; scenarios use pending_decisions.json and desktop false, stated in the request). See laps/lap-14/design.md and laps/lap-13/runbook.md 'range risk'"
   },
   "contract": {
     "file": "laps/lap-14/contract.json",
-    "command": ["python3", "-m", "claude_org_runtime.cli", "dispatcher"],
-    "commandNote": "lap 13's command ended in `delegate-plan`; B needs a second subcommand, so the command stops at `dispatcher` and each scenario's argv starts with `delegate-plan` or `spawn-prompt-step`. Not tried in the factory (no draft was run): the factory's summary rule exempts the interface's command words from the leak check (src/scenario.ts argvData), which the drafted interface must then list for both subcommands; runbook step 5 reads this in the approval summary",
-    "pythonPath": ["src"],
+    "command": [
+      "python3",
+      "-m",
+      "claude_org_runtime.cli"
+    ],
+    "commandNote": "lap 13's command ended in `delegate-plan`; this lap needs three subcommands, so the command stops at the module and each scenario's argv starts with `dispatcher delegate-plan`, `dispatcher spawn-prompt-step` or `attention scan`. Not tried in the factory (no draft was run): the summary rule exempts the interface's command words from the leak check (src/scenario.ts argvData), so the drafted interface must list all three; runbook step 7 reads this in the approval summary. With factory change 4 the spec also declares an external service (`draft --contract ... --service`): SERVICE_URL is in the program's environment and `{{SERVICE_URL}}` is a scenario variable (laps/lap-14/factory-issues.md section 4)",
+    "pythonPath": [
+      "src"
+    ],
     "deps": "9d3778c3e9335fda0b852970cca76ee606df561c191071beb796363a3b9b7032",
     "lock": "laps/lap-14/requirements.lock",
     "lockNote": "byte-identical to laps/lap-13/requirements.lock (sha256 checked); /opt/factory-deps/<id> from lap 13 is reused, runbook step 1",
@@ -77,64 +93,92 @@
   "factory": {
     "repo": "suisya-systems/factory",
     "baseCommit": "fea10ee3a95d894bd45b104cd12255eddcedfcd9",
-    "baseNote": "lap 13's commit (PR #67). Lap 14 runs on a later commit that contains the two changes of laps/lap-14/factory-issues.md (1: builder transcript saved, 2: cost constants). The commit is filled in here, and named in 'amendments', when both are merged (runbook step 0); lap 14 does not start before.",
+    "baseNote": "lap 13's commit (PR #67). Lap 14 runs on a later commit that contains the four changes of laps/lap-14/factory-issues.md (1 transcript, 2 cost constants, 3 expect.jsonAbsent, 4 run + fake service); implemented by a separate worker (owner decision 2026-10-27). The commit is filled in 'commit', and named in 'amendments', when all four are merged (runbook step 0); lap 14 does not start before.",
     "commit": null,
     "prerequisites": [
-      "1. builder transcript saved under $FACTORY_HOME/transcripts/<change>/ (laps/lap-14/factory-issues.md section 1; required: the contamination check below reads it)",
-      "2. cost constants raised (laps/lap-14/factory-issues.md section 2: CLASSIFIER_BUDGET 0.5 -> 1, draftTask 1 -> 2, CAPS.maxCostUsd 10 -> 25)",
-      "3. `expect.jsonAbsent` (laps/lap-14/factory-issues.md section 3): without it a scenario cannot say that a record is gone, so record-revocation is not measured; if it is not merged this registration is rewritten before the lap (the record-revocation site removed, an amendment). 'expires_at_ms - decided_at_ms = 30000' is in no case in Q (not expressible: capture takes values, it does not compute)"
+      "1. builder transcript saved under $FACTORY_HOME/transcripts/<change>/ (factory-issues.md section 1; the contamination check reads it)",
+      "2. cost constants: classifier 0.5 -> 1, draftTask 1 -> 2, CAPS.maxCostUsd 10 -> 25 (factory-issues.md section 2; owner's values). Extrapolated: a draft of about 45 scenarios may exceed 25 (see cost)",
+      "3. `expect.jsonAbsent` (factory-issues.md section 3): without it record-revocation (B) is not measured",
+      "4. a run step and the fake external service in one scenario (factory-issues.md section 4): without it no scenario of part C can be written; the lap does not start without it"
     ]
   },
   "prediction": {
     "side": "does-not-drop-below-90",
     "sideJa": "割らない",
     "q": {
-      "metric": "Q = mean over the 8 builds of (scenarios passed / scenarios of runtime-ab-rep that the build was scored on); a build that did not start counts 0 and is reported apart; flakes are left out as in flakeRule",
-      "pointPct": 95,
-      "rangePct": [85, 100],
-      "pBelow90": 0.25,
-      "pAtCeiling": 0.4,
-      "ceilingNote": "ceiling = Q >= 95 (calibrate-80's ceilingPct). Basis: lap 13 (A alone, 495 words) 100.0 %; the calibration's opus minimum was 90.6 % over 12 requests of 694-901 words and 96.2 % at L2; B adds a fail-safe rule that the request states as a principle plus one sentence, not rule by rule. The prediction is one-sided on purpose: the owner asked for a request 'that may split', not for a request chosen to split, so the side follows the evidence, and the evidence says a Q below 90 % is the less likely side.",
-      "bandNote": "pBelow90 = 0.25 is for the whole lap, including a 0.10 share for a lap-invalidating infrastructure fault that would show as Q near 0 (see dependency-resolution); builder-caused Q below 90 % is about 0.15-0.20"
+      "metric": "Q = mean over the 8 builds of (scenarios passed / scenarios of runtime-abc-rep that the build was scored on); a build that did not start counts 0 and is reported apart; flakes are left out as in flakeRule",
+      "pointPct": 93,
+      "rangePct": [
+        80,
+        100
+      ],
+      "pBelow90": 0.35,
+      "pAtCeiling": 0.25,
+      "ceilingNote": "ceiling = Q >= 95 (calibrate-80's ceilingPct). Basis: lap 13 (A alone, 495 words) 100.0 %; calibrate-80's opus minimum 90.6 % over 12 requests of 694-901 words and 96.2 % at L2; here 1,658 words (L1), three parts, ~45 scenarios, part C new (nothing to copy from training), parts B and C leave details to the builder. The side is the less likely to be wrong by the evidence (P(Q < 90) = 0.35 < 0.5); it was not chosen to split.",
+      "bandNote": "pBelow90 = 0.35 includes about 0.10 for a lap-invalidating fault (dependency-resolution, fake-service-infrastructure) that would show as a Q far below 90 for every build; the builder-caused share is about 0.25-0.30. One failing scenario of 45 costs a build 2.2 points, so Q below 90 needs about 4-5 failed scenarios per build on average (or 1 in 2-3 builds failing a whole part)."
     },
     "whereItFalls": {
-      "note": "Where the first failing scenario of a build is expected, as probabilities that at least one build (of 8) fails at least one scenario for that reason. They do not sum to 1. 'dependency' and 'base' are lap-invalidating (infrastructure, not a builder verdict); the rest are builder verdicts or expectation errors.",
+      "note": "Where the first failing scenario of a build is expected, as probabilities that at least one build (of 8) fails at least one scenario for that reason. They do not sum to 1. dependency-resolution, fake-service-infrastructure and base-move are lap-invalidating (infrastructure, not a builder verdict); expectation-error sites go to errors.json.",
       "sites": [
         {
-          "site": "record-revocation",
-          "p": 0.35,
-          "how": "needs prerequisite 3 (a scenario that states absence). B's fail-safe: after an invalid input (not JSON, a missing field) or an unwritable --state-dir, the earlier record of that target must be gone. A build removes the record only for wait/escalate and leaves it after invalid input or after a failed write; or it keeps the old record when the new write fails",
-          "reading": "the site the request states least rule by rule (a principle and one sentence); the most likely builder-caused failure"
+          "site": "record-revocation (B)",
+          "p": 0.3,
+          "how": "B's fail-safe: after an invalid input or an unwritable --state-dir the earlier record of that target must be gone; a build removes it only for wait/escalate, or keeps the old one when the write fails. Needs factory change 3.",
+          "reading": "the part of B the request states least rule by rule; the most likely builder-caused failure of A+B"
         },
         {
-          "site": "decide-argv-values",
-          "p": 0.25,
-          "how": "a scenario compares `decide_argv` exactly (order, the value of --state-dir). The request fixes the order (after --deadline-ms: --target, --task-id, --state-dir) but not whether --state-dir is the string given or a normalised path (`./s` vs `s`, trailing slash); builds differ, and the scenario's expectation may follow one of them",
-          "reading": "if the scenario drafter assumed one reading and the request does not decide it, it is an expectation error (errors.json), not a builder failure"
+          "site": "ntfy-request-shape (C)",
+          "p": 0.3,
+          "how": "what the fake receives: the method/path (`/<topic>`, a trailing `/` on server ignored), the Title and Priority headers (urgent 5, normal 3), the body cut to max_body_chars with the existing ellipsis rule and control characters removed; builds differ in the cut (off by one, ellipsis counted or not), in Title when the title contains non-ASCII, or in sending JSON instead of plain text",
+          "reading": "builder verdict; the request states each point once"
         },
         {
-          "site": "target-validation",
+          "site": "ntfy-config-validation (C)",
+          "p": 0.3,
+          "how": "`ntfy` shape errors that must exit 2: topic `a b`, unknown key inside `ntfy`, wrong type, missing topic with enabled; builds differ on which of these they reject, and on whether a non-enabled `ntfy` with a bad topic is checked",
+          "reading": "builder verdict where the request is explicit; the 'enabled false and a bad topic' case is not stated, and a scenario that tests it is an expectation error"
+        },
+        {
+          "site": "decide-argv-values (A+B)",
+          "p": 0.2,
+          "how": "a scenario compares `decide_argv` exactly (order, the value of --state-dir). The request fixes the order but not whether --state-dir is the string given or a normalised path",
+          "reading": "if the drafter assumed one reading, expectation error; else builder verdict"
+        },
+        {
+          "site": "ntfy-failure-and-silence (C)",
+          "p": 0.2,
+          "how": "failures (500, nothing listening) must exit 0 with one `warning: ntfy notification failed` line and the same stdout; a build lets an exception through (exit 1), prints two lines, or changes stdout; or sends when disabled / --dry-run",
+          "reading": "builder verdict"
+        },
+        {
+          "site": "clock-and-ladder (C, B)",
           "p": 0.15,
-          "how": "a build accepts `.hidden`, `a/b`, `..` or an empty target, or rejects a legal one (`a.b-c_1`), or touches a file for an invalid target",
-          "reading": "builder verdict; the pattern is stated in words, so most builds should pass"
+          "how": "an expectation that needs the clock (decided_at_ms value, a pending decision whose age depends on now), or a scenario whose urgent/demote/drop outcome depends on the shown ladder code which the drafter read wrongly",
+          "reading": "expectation error (errors.json); C's scenarios fix the ladder with received_at in 2020 and a large pending_decision_max / pending_decision_drop"
         },
         {
-          "site": "cli-exit-code",
-          "p": 0.15,
-          "how": "A, as in lap 13: a build changes the pane-id parsing but alters which input is refused or planned (e.g. keeps `p10` as ten)",
-          "reading": "lap 13 passed this site in 8 of 8 builds, so it is lower than in lap 13's registration (0.35)"
+          "site": "cli-exit-code (A)",
+          "p": 0.1,
+          "how": "A, as in lap 13: a build changes the pane-id parsing but alters which input is refused or planned",
+          "reading": "lap 13 passed this site in 8 of 8"
         },
         {
-          "site": "clock-in-expectation",
+          "site": "target-validation (B)",
           "p": 0.15,
-          "how": "a scenario asserts a value of decided_at_ms (an absolute time or a window around now) that no build can meet reliably, or compares the records of two passes by time",
-          "reading": "expectation error: errors.json and out of Q (the request says only that expires_at_ms - decided_at_ms is 30000)"
+          "how": "a build accepts `.hidden`, `a/b`, `..` or an empty target, or rejects a legal one, or touches a file for an invalid target",
+          "reading": "builder verdict"
+        },
+        {
+          "site": "fake-service-infrastructure",
+          "p": 0.15,
+          "how": "factory change 4 does not hold in the run sandbox: the relay does not start, the bridge drops requests, SERVICE_URL is not the address the program sees, or the fake keeps requests from a previous scenario; all C scenarios fail alike",
+          "reading": "lap-invalidating; fix the factory and rerun the replicate under a new change id"
         },
         {
           "site": "dependency-resolution",
-          "p": 0.10,
-          "how": "the new contract command (`python3 -m claude_org_runtime.cli dispatcher`, argv chosen per scenario) fails to start in the run sandbox for a reason lap 13's smoke did not show (the deps set is reused unchanged, so this is about the command, not the packages), or `spawn-prompt-step` fails when run with a writable empty working directory and no HOME",
-          "reading": "lap-invalidating; fix the contract and rerun the replicate under a new change id"
+          "p": 0.1,
+          "how": "the contract command (`python3 -m claude_org_runtime.cli`, argv chosen per scenario) fails to start in the run sandbox, or `attention scan` / `spawn-prompt-step` fail for lack of HOME or a writable current directory",
+          "reading": "lap-invalidating"
         },
         {
           "site": "base-move",
@@ -143,43 +187,44 @@
           "reading": "procedure fault; replicate refuses before any build"
         }
       ],
-      "firstToFall": "record-revocation",
-      "firstToFallNote": "if Q is below 90, the order of expected causes is: record-revocation, decide-argv-values, target-validation / cli-exit-code, dependency-resolution (infrastructure)"
+      "firstToFall": "record-revocation (B), ntfy-request-shape (C) and ntfy-config-validation (C) are close; none is clearly first",
+      "firstToFallNote": "if Q is below 90 for builder reasons, the expected order of causes is: ntfy-request-shape, ntfy-config-validation, record-revocation, decide-argv-values, ntfy-failure-and-silence. The scenarios of part C are expected to be the weakest part of Q because C has no published answer and states fewer rules per behaviour than A."
     },
     "run": {
-      "pShipped": 0.75,
-      "attemptsExpected": "1 or 2 of at most 5",
+      "pShipped": 0.7,
+      "attemptsExpected": "1 to 3 of at most 5",
       "note": "`run` needs the LLM judge to accept as well as every scenario; ship is the fast-forward of the disposable ship target only"
     }
   },
   "successLine": {
-    "text": "The lap 'held' (factory carried over to an existing Python repository at a size that may split) when all of: (1) Q >= 90 %; (2) at least 7 of the 8 builds started (builderOk); (3) no lap-invalidating fault (dependency-resolution or base-move) in any scored scenario; (4) the run shipped: runtime-ab-run ended with a fast-forward of the ship target whose new HEAD is the judged commit and which has 003efef as an ancestor. Otherwise 'did not hold', and the report names the site of the first failure by the whereItFalls list. A lap-invalidating fault is not a verdict on the builder: it is reported as invalid and the replicate is run again under a new change id after the fault is fixed. Conditions (2)-(4) are carried over from lap 13; the owner's line is (1).",
+    "text": "The lap 'held' (factory carried over to an existing Python repository at a size that may split) when all of: (1) Q >= 90 % (owner); (2) at least 7 of the 8 builds started (builderOk); (3) no lap-invalidating fault (dependency-resolution, fake-service-infrastructure or base-move) in any scored scenario; (4) the run shipped (owner: the ship stays a condition): runtime-abc-run ended with a fast-forward of the ship target whose new HEAD is the judged commit and which has 003efef as an ancestor. Otherwise 'did not hold', and the report names the site of the first failure by the whereItFalls list. A lap-invalidating fault is not a verdict on the builder: it is reported as invalid and the replicate is run again under a new change id after the fault is fixed.",
     "qPct": 90,
     "minStartedBuilds": 7,
     "runMustShip": true,
-    "linesNote": "the 80 % line of lap 13 is not used. Q is read against 90 % and the result is also placed against lap 13 (100.0 % at 495 words) and calibrate-80 (opus: no Q below 90.6)"
+    "linesNote": "the 80 % line of lap 13 is not used. Q is read against 90 %, and reported by part (A, B, C: the scenarios' subjects) beside the whole, and placed against lap 13 (100.0 % at 495 words) and calibrate-80 (opus: no Q below 90.6)"
   },
   "cost": {
     "lapCapUsd": 150,
     "lapCapNote": "provisional: the owner has not set it (the brief: 'until a person decides, 150'). The factory's own lap cap is a constant ($260, CAPS.lapCostUsd); $150 is held by the per-change caps below and by reading lap-ledger.jsonl after every step",
     "perChangeCapsUsd": {
-      "runtime-ab-rep (replicate --max-cost)": 70,
-      "runtime-ab-run (run --max-cost)": 35
+      "runtime-abc-rep (replicate --max-cost)": 70,
+      "runtime-abc-run (run --max-cost)": 50
     },
     "stopLineUsd": 150,
-    "noSeparateMeasureDraft": "lap 13 spent $6.39 on a measure draft to set the caps. Here the caps are raised first (factory prerequisite 2) and the draft of runtime-ab-rep is the measurement: its per-call costs are read from the ledger before the second draft (runbook step 5). A measure draft would cost about the same as a real one (extrapolated $16).",
+    "noSeparateMeasureDraft": "lap 13 spent $6.39 on a measure draft. Here the draft of runtime-abc-rep is the measurement: its per-call costs are read from the ledger before the second draft (runbook step 5), with a stop rule.",
     "expectedUsd": {
-      "low": 40,
-      "high": 90,
-      "basis": "extrapolated from lap 13's measured unit costs (draft rep $6.30, draft run $6.08, build $0.40-0.51, run $0.58, probe $0.35, total $23.35 with the $6.39 measure draft) scaled by: shown chars x1.45, scenarios about x2 (14-15 -> 26-34, not fixed in advance), request 2.2x, builder cost x2-2.5. Not measured.",
+      "low": 55,
+      "high": 110,
+      "basis": "extrapolated from lap 13's measured unit costs (draft rep $6.30, draft run $6.08, build $0.40-0.51, run $0.58, probe $0.35) scaled by: shown chars x1.77 (classifier per call about $0.33 -> $0.58), scenarios about x3 (14-15 -> 40-50, not fixed in advance), builder cost x3-4 (3 parts, 1,658 words, more files to read). Not measured.",
       "lines": {
-        "probe-isolation": "0.35 (lap 13 measured)",
-        "draft runtime-ab-rep": "11-22 (extrapolated; classifier ~30 calls x ~$0.48 = ~$14 of it)",
-        "draft runtime-ab-run": "11-22 (extrapolated)",
-        "replicate K=8": "6.5-12 (lap 13: $3.66; x2-2.5 on 8 builds of $0.8-1.5)",
-        "run (attempts 1-3)": "1.5-5 (lap 13: $0.58 for one attempt)",
-        "total": "30-62 plus a redraft allowance of up to $22 gives 40-90"
-      }
+        "probe-isolation": "0.4",
+        "draft runtime-abc-rep": "20-40 (classifier ~45 calls x ~$0.58 = ~$26 of it; spec drafter 2 calls ~$0.8; scenario drafter ~$1.5-2)",
+        "draft runtime-abc-run": "20-40",
+        "replicate K=8": "10-20 (lap 13: $3.66; 8 builds of $1.2-2.5)",
+        "run (attempts 1-3)": "2-8 (lap 13: $0.58 for one attempt)",
+        "total": "52-108; rounded to 55-110"
+      },
+      "capWarning": "the owner's draft cap ($25) is below the extrapolated draft cost at 45 scenarios (about $29); a draft that reaches it fails mid-spend. Runbook step 5 stops the lap if the first draft fails for cost or its ledger shows more than $35"
     },
     "caps": {
       "confirmed": false,
@@ -200,33 +245,35 @@
         "scenarioDrafter": 0.532,
         "classifier": 0.334
       },
-      "rule": "the proposed values are fixed here and are a factory constant change (prerequisite 2), merged before the first draft. 'confirmed' is set to true at runbook step 4 when `$FACTORY/src` shows them. If after the first draft any call reached 70 % of the proposed cap, the report says so; the lap is not rerun for it.",
+      "rule": "the values are the owner's (decision 2026-10-27) and are factory constants (prerequisite 2), merged before the first draft. 'confirmed' is set to true at runbook step 0 when `$FACTORY/src` shows them. If a draft reaches the draft cap, the report says so and the owner decides whether to raise it (not decided here).",
       "constants": "src/roles.ts draftTask maxCostUsd; src/classify.ts CLASSIFIER_BUDGET.maxCostUsd; src/limits.ts CAPS.maxCostUsd"
-    }
+    },
+    "perChangeCapsNote": "--max-cost includes the draft's spend (lap 13 runbook). 70 + 50 + probe ~1 = 121, inside 150"
   },
-  "errorsRule": "Errors rule (lap 8, restated): an expected value that contradicts the request, or a count or number that does not add up, is an expectation error; so is a run step whose expectation depends on a file or a template path the shown ranges do not give, and an expectation that depends on a reading the request leaves open (decide-argv-values: the form of --state-dir) or on the clock (clock-in-expectation). Each is listed in errors.json with a quote of the request; the whole scenario is left out of every build's pass fraction. Q is reported both raw and corrected; if they fall on different sides of 90 %, the verdict is 'undecided', not either.",
+  "errorsRule": "Errors rule (lap 8, restated): an expected value that contradicts the request, or a count or number that does not add up, is an expectation error; so is a run step whose expectation depends on a file or a template path the shown ranges do not give, an expectation that depends on a reading the request leaves open (decide-argv-values: the form of --state-dir; ntfy-config-validation: `enabled` false with a bad topic) or on the clock (clock-and-ladder), and an expectation of what the event's title or body say that the shown code does not give. Each is listed in errors.json with a quote of the request; the whole scenario is left out of every build's pass fraction. Q is reported both raw and corrected; if they fall on different sides of 90 %, the verdict is 'undecided', not either.",
   "flakeRule": "Flake rule (lap 12, restated): each build is rescored twice after its first judgement (replicate --rescore twice, judgements = 3). A (scenario, build) whose pass/fail differs among the 3 is a flake and is left out of that build's pass fraction (numerator and denominator). More than 5 % of the cells being flakes gives no verdict.",
   "judgements": 3,
   "maxFlakePct": 5,
   "comparability": {
     "summary": "Q here uses the same formula as calibrate-80 and lap 13 (mean over builds of a build's pass fraction). It is read against the owner's 90 % line and placed beside lap 13 and the calibration; it is not a point on the calibration curve.",
     "differences": [
-      "a command-line program with `run` steps (exit code, stdout JSON, files), not an HTTP app, as in lap 13",
+      "a command-line program with `run` steps (exit code, stdout JSON, files) and, for part C, a fake external service in the same scenario; not an HTTP app",
       "an extension of an existing repository (152 tracked files); calibration builds started from an empty repository",
       "K=8 builds of one spec, one scenario set (own only); calibration used 4 builds x 2 sets (own and cross) per request",
-      "the scenario count is not fixed in advance (calibration: 11-15; lap 13: 14; here an expected 26-34); each scenario is worth less of Q than in lap 13",
-      "request size is 1,082 words: above calibrate-80's L0 (694-901), below its L1 (1,614-1,798), 2.2 times lap 13. The calibration's finding that Q does not fall with size covered 694-3,594 words on greenfield apps",
-      "two changes in one request, joined at one output (decide_argv); calibration's combined requests joined 2-4 parts with 10-49 cross rules, and this one has 1 (Part 3)",
+      "the scenario count is not fixed in advance (calibration 11-15, lap 13: 14; here an expected 40-50); each scenario is worth about a third of what it was in lap 13",
+      "request size is 1,658 words, inside calibrate-80's L1 (1,614-1,798); but L1's combined requests have 10-12 rule ties between parts, this one has 1 (A and B at decide_argv) and C is separate. The size is L1's; the coupling is much lower",
+      "parts A and B reproduce published changes (back-in-time); part C is forward-looking (no implementation exists). Q is also reported by part",
       "the drafters and the classifier saw only the ranges, the builder the whole repository; calibration drafters saw the whole (empty or small) app",
       "the builder is claude-opus-5-5, as in the calibration; no cross-family scenario drafter",
       "dependencies are provided from a hash-pinned set outside the sandbox (lap 13's set, reused)",
+      "part C leaves details to the builder (the request's 'Not decided here'); calibration's requests state every rule",
       "one-sided line: 90 % (calibrate-80 and lap 13 used 80 % for 'does not drop')"
     ]
   },
   "contamination": {
-    "kind": "reproduction of two published changes (back-in-time)",
-    "text": "Both subjects are public in suisya-systems/claude-org-runtime: A is #242 / issue #240 (merged 2026-10-11), B is #245 / issue #244 (merged 2026-10-12); both released in v0.1.50. A model may have seen them, so Q can be an upper bound on what the builder derives from the request alone. Leak paths: (1) model training data, not testable here; (2) the builder's model session shares the host network (factory README), so a builder could read the published fix or `pip download` a released wheel of claude-org-runtime; the run contract tells it to install nothing and use no network, an instruction only; (3) the ship target holds no object after 003efef. B's section of docs/cli.md is not in the base (it was added by the change), so the base holds no written answer to B. The request states the rules of both changes in its own words, so the builder is not asked to rediscover them. No forward-looking subject is used in this lap (runtime #21, ntfy, needs a fake service the run step cannot reach, laps/lap-14/design.md).",
-    "check": "after the replicate and the run, every builder transcript under $FACTORY_HOME/transcripts/<change>/ (factory prerequisite 1) is searched; the commands are in runbook step 9. Search terms: `github.com/suisya-systems/claude-org-runtime`, `raw.githubusercontent`, `pypi.org`, `pip download`, `pip install`, `git fetch`, `git log --all`, the commit ids b6ad40a / 263ff3f / 410fd8a / 176bcf1 / a021ebd / 719f865 / f79286f, the tags v0.1.50 / v0.1.51, the issue numbers #240 / #242 / #244 / #245, and the tool names WebFetch / WebSearch. Any hit lists the build apart and Q is given with and without it. A transcript that is missing for a build is itself reported (the check is then incomplete, not clean). The check is on the transcript, the output-side search over the build's diff (as in lap 13) is run too.",
+    "kind": "reproduction of two published changes (A, B: back-in-time) and one forward-looking change (C)",
+    "text": "Both subjects are public in suisya-systems/claude-org-runtime: A is #242 / issue #240 (merged 2026-10-11), B is #245 / issue #244 (merged 2026-10-12); both released in v0.1.50. A model may have seen them, so Q can be an upper bound on what the builder derives from the request alone. Leak paths: (1) model training data, not testable here; (2) the builder's model session shares the host network (factory README), so a builder could read the published fix or `pip download` a released wheel of claude-org-runtime; the run contract tells it to install nothing and use no network, an instruction only; (3) the ship target holds no object after 003efef. B's section of docs/cli.md is not in the base (it was added by the change), so the base holds no written answer to B. The request states the rules of both changes in its own words, so the builder is not asked to rediscover them. Part C (runtime #21, ntfy) is forward-looking: no commit of the repository implements it (`git grep -i ntfy`: 0 lines at 003efef and at 719f865), so a leak by fetch has nothing to find except the issue text; the ntfy HTTP API itself is public knowledge, so C is not free of training-data influence. Q is reported by part so that the forward-looking part can be read apart.",
+    "check": "after the replicate and the run, every builder transcript under $FACTORY_HOME/transcripts/<change>/ (factory prerequisite 1) is searched; the commands are in runbook step 10. Search terms: `github.com/suisya-systems/claude-org-runtime`, `raw.githubusercontent`, `pypi.org`, `pip download`, `pip install`, `git fetch`, `git log --all`, the commit ids b6ad40a / 263ff3f / 410fd8a / 176bcf1 / a021ebd / 719f865 / f79286f, the tags v0.1.50 / v0.1.51, the issue numbers #240 / #242 / #244 / #245, and the tool names WebFetch / WebSearch. Any hit lists the build apart and Q is given with and without it. A transcript that is missing for a build is itself reported (the check is then incomplete, not clean). The check is on the transcript, the output-side search over the build's diff (as in lap 13) is run too.",
     "ifPrerequisite1IsNotMerged": "the lap does not start (runbook step 0). A lap run without transcripts would repeat lap 13's 'half-checked' result."
   },
   "amendments": []
