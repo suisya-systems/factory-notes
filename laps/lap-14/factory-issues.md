@@ -43,6 +43,20 @@ factory のコードは触っていない。読んだのは suisya-systems/facto
 
 これを先に入れる理由: 上限に当たると draft は課金の途中で失敗する（13 周目の runbook 手順 6 の注意）。実測の draft を別に 1 回流して上限を決める 13 周目の方式は、この周では $16 前後の測定費用が掛かるので使わず、上限を先に十分高く置き、本番の draft の台帳で実測する（[runbook.md](runbook.md) 手順 5）。この点は人の判断に回す（完了報告の「判断仰ぎ」）。
 
-## 3. 14 周目では要らない変更（記録）
+## 3. 期待値に「無いこと」を書けるようにする（14 周目の前提。Codex ゲートの指摘で追加）
+
+B の中心の性質は「古い record を消す」（wait / escalate / 不正な入力 / 書けないとき）で、期待値は「ファイルが無い」になる。今の工場では書けない。
+
+- `Expect` は `status`・`json`（部分一致）・`jsonHas`（あること）・`isArray`・`length`（配列の長さ）だけ（`factory:src/scenario.ts:10`）。`checkStep` は `jsonHas` を存在、`json` を部分一致で見る（`factory:src/scenario.ts:181-196`）。
+- `run` の手は、`read` に挙げたファイルが無いと封筒の `files` から落とす（`factory:src/program.ts:170-176`、コメント「absent from the envelope, so `jsonHas` / `length` can tell」）。落ちたことを言う期待値が無い。`expect.json: {"files": {}}` は部分一致なので、古い record が残っていても通る。`length` は配列にしか使えない（`factory:src/scenario.ts:184-187`）。
+- したがって、「消えている」を期待値にしたシナリオは、消えない実装でも通る（偽の合格）か、書けない。
+
+変更案: `expect` に `jsonAbsent: string[]`（`jsonHas` の逆。`get(json, p) !== undefined` なら失敗）を足す。`validateScenarios` の許すキー、シナリオの漏れ検査、草稿役への指示（`factory:src/roles.ts` の期待値の説明）、分類の予測の照合（`factory:src/classify.ts`）、承認の要約の表示、試験を含む。規模は小さい（`jsonHas` と同じ作り）。
+
+**入れない場合**: B のこの性質は隠しシナリオで測れない。14 周目の Q は、record が「書かれる」側（項目と値）と標準出力・終了コード・A だけを測り、`record-revocation`（予測の確率 0.35 の site）は読めない。その場合は事前登録を直してから始める（`prediction` の site を除き、`amendments` に書く）。
+
+なお `expires_at_ms - decided_at_ms = 30000` の引き算は `capture` では書けない（`capture` は値を取るだけ。`factory:src/scenario.ts:191-194`）。これは工場に足さず、Q には入れない（シナリオは両方の項目が整数であることまで）。
+
+## 4. 14 周目では要らない変更（記録）
 
 - 偽サービスと `run` の手の組み合わせ（題材 C に要る。[design.md](design.md) の案 2）: `run` の手はネットワークを切って走り（`factory:src/program.ts:54`、`factory:src/program.ts:165` の `isolateNet: true`）、`run` の手の許すキーは `run` `stdin` `files` `read` `env` `expect` `capture` だけで、`service` の手は HTTP の手に限る（`factory:src/scenario.ts:77, 98`）。通知先の偽物をプログラムから叩かせるには、`run` の sandbox の中に loopback の偽サービスを立てる変更が要る。14 周目の推奨案には入らない。

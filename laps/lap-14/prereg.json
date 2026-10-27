@@ -81,7 +81,8 @@
     "commit": null,
     "prerequisites": [
       "1. builder transcript saved under $FACTORY_HOME/transcripts/<change>/ (laps/lap-14/factory-issues.md section 1; required: the contamination check below reads it)",
-      "2. cost constants raised (laps/lap-14/factory-issues.md section 2: CLASSIFIER_BUDGET 0.5 -> 1, draftTask 1 -> 2, CAPS.maxCostUsd 10 -> 25)"
+      "2. cost constants raised (laps/lap-14/factory-issues.md section 2: CLASSIFIER_BUDGET 0.5 -> 1, draftTask 1 -> 2, CAPS.maxCostUsd 10 -> 25)",
+      "3. `expect.jsonAbsent` (laps/lap-14/factory-issues.md section 3): without it a scenario cannot say that a record is gone, so record-revocation is not measured; if it is not merged this registration is rewritten before the lap (the record-revocation site removed, an amendment). 'expires_at_ms - decided_at_ms = 30000' is in no case in Q (not expressible: capture takes values, it does not compute)"
     ]
   },
   "prediction": {
@@ -102,7 +103,7 @@
         {
           "site": "record-revocation",
           "p": 0.35,
-          "how": "B's fail-safe: after an invalid input (not JSON, a missing field) or an unwritable --state-dir, the earlier record of that target must be gone. A build removes the record only for wait/escalate and leaves it after invalid input or after a failed write; or it keeps the old record when the new write fails",
+          "how": "needs prerequisite 3 (a scenario that states absence). B's fail-safe: after an invalid input (not JSON, a missing field) or an unwritable --state-dir, the earlier record of that target must be gone. A build removes the record only for wait/escalate and leaves it after invalid input or after a failed write; or it keeps the old record when the new write fails",
           "reading": "the site the request states least rule by rule (a principle and one sentence); the most likely builder-caused failure"
         },
         {

@@ -19,7 +19,7 @@
 | 成功の線 | Q ≥ 90 %（オーナー）。ほかの 3 条件は 13 周目から引き継ぐ | [prereg.json](prereg.json) |
 | 予測 | 割らない（点 95 %、範囲 85〜100 %、90 % を割る確率 0.25） | 事前登録 |
 | 費用 | 期待 $40〜90、上限は仮に $150 | 外挿。未測定 |
-| 工場の変更 | 2 本（transcript の保存、費用の定数）。**これがマージされるまで周を始めない** | Issue 案のみ |
+| 工場の変更 | 3 本（transcript の保存、費用の定数、「無いこと」の期待値）。**これがマージされるまで周を始めない**（3 だけは欠けても事前登録を直せば始められる） | Issue 案のみ |
 
 **測れなかったこと**（準備の作業環境では factory も model CLI も動かない）:
 
@@ -34,7 +34,7 @@
 
 ```
 NOTES=<factory-notes の checkout>            # laps/lap-14/ を持つ
-FACTORY=<suisya-systems/factory の checkout>  # 手順 0 の 2 つの変更を含む commit
+FACTORY=<suisya-systems/factory の checkout>  # 手順 0 の 3 つの変更を含む commit
 SCR=<$HOME の下の作業用ディレクトリ>
 SHIP=$SCR/runtime-ship-14                     # 13 周目の runtime-ship は使わない（run で HEAD が進んでいる）
 export FACTORY_DEPS=/opt/factory-deps
@@ -42,7 +42,7 @@ export FACTORY_DEPS=/opt/factory-deps
 
 ### 0. 【人】工場の前提の変更がマージ済みであること（モデルを呼ばない）
 
-- [factory-issues.md](factory-issues.md) の 1（transcript の保存）と 2（費用の定数）が factory にマージされ、`$FACTORY` がその commit である。**どちらかが欠けるなら周を始めない**（transcript が無いと汚染の検査が 13 周目と同じ半分になる。費用の定数が無いと draft が上限で失敗する）。
+- [factory-issues.md](factory-issues.md) の 1（transcript の保存）、2（費用の定数）、3（期待値の「無いこと」、`expect.jsonAbsent`）が factory にマージされ、`$FACTORY` がその commit である。**どちらかが欠けるなら周を始めない**（transcript が無いと汚染の検査が 13 周目と同じ半分になる。費用の定数が無いと draft が上限で失敗する）。3 だけが欠けるなら、窓口の判断で、B の record の不在を測らない形に事前登録を直して（`prediction` の `record-revocation` を除き、`amendments` に書く）から始めてよい。
 - `cd $FACTORY && git log -1 --oneline`。この commit を [prereg.json](prereg.json) の `factory.commit` に書き、`amendments` に 1 行足して commit する。
 - `npm ci --ignore-scripts && npm test` が通る。
 - 定数の確認: `grep -n "maxCostUsd" $FACTORY/src/roles.ts $FACTORY/src/classify.ts`、`grep -n "CAPS = " $FACTORY/src/limits.ts`。事前登録の `cost.caps.proposed` と一致すること。一致したら `cost.caps.confirmed` を `true` にして commit する。
@@ -123,7 +123,8 @@ npm run factory -- draft runtime-ab-run --request $REQ --base $SHIP "${BP[@]}" -
 - **インタフェースに `delegate-plan` と `spawn-prompt-step` の両方のコマンドの語が入り、シナリオの argv の先頭がそのどちらかである**（上の「測れなかったこと」の 2）。片方しか無い、またはシナリオが argv の先頭に別の語を書いているなら、承認せず、窓口へ報告する。
 - 仕様の `## Command-line program (factory)` の節が contract と一致している。
 - シナリオが `run` の手だけで書かれ、`spawn-prompt-step` のシナリオは `stdin` に `{"screen", "previous_screen", "elapsed_ms"}` を持ち、`read` で `<state-dir>/dispatcher/spawn-prompt/<target>.json` を読む。`files` に書く task JSON と panes JSON が現実の形（`task_id` ほか `build_plan` の必須項目）。
-- **期待値の誤りの候補を探す**（[prereg.json](prereg.json) の `errorsRule`）: (a) `decide_argv` の `--state-dir` の値を、依頼が決めていない書き方（`./s` と `s`、末尾の `/`）で厳密に比べていないか。(b) `decided_at_ms` の絶対値や、時刻の窓を期待していないか（`expires_at_ms - decided_at_ms = 30000` と項目の形だけが依頼の範囲）。(c) 画面の例（`spawn-prompt-step` の標準入力）が、見せた `test_spawn_prompt.py` の画面から外れて、状態の分類が曖昧な形（`unknown`）になっていないか。見つけたら、承認の注記に書き、`errors.json` の対象にする。
+- **record の不在を言うシナリオが `jsonAbsent` で書かれている**こと。`{"files": {}}` のような部分一致で「無い」と言っているシナリオは、古い record が残っていても通るので、承認せず窓口へ報告する。
+- **期待値の誤りの候補を探す**（[prereg.json](prereg.json) の `errorsRule`）: (a) `decide_argv` の `--state-dir` の値を、依頼が決めていない書き方（`./s` と `s`、末尾の `/`）で厳密に比べていないか。(b) `decided_at_ms` の絶対値や、時刻の窓、引き算（`expires_at_ms - decided_at_ms`）を期待していないか（引き算は書けない。両方の項目が整数であることまで）。(c) 画面の例（`spawn-prompt-step` の標準入力）が、見せた `test_spawn_prompt.py` の画面から外れて、状態の分類が曖昧な形（`unknown`）になっていないか。見つけたら、承認の注記に書き、`errors.json` の対象にする。
 - 要約の「Undecided」に、依頼文が決めている点（`p10` = 64、小さい番号が先、拒否する文字、target の文字の規則、record の項目、30000、消す条件）が回されていない。
 - 食い違い（`contradicts` / `unstated`）の一覧を控える（報告の素材）。`unstated` が 0 本なら、B の「推測が要る場面」が草稿役に拾われていない（13 周目と同じ）。報告で述べる。
 
@@ -191,7 +192,7 @@ npm run factory -- run runtime-ab-run --ship-target $SHIP --max-cost 35
 
 ## 残る懸念（準備の時点）
 
-1. **工場の前提の変更が未マージ。** 2 本とも Issue 案で、実装も試験も無い。`stream-json` の形は未確認。
+1. **工場の前提の変更が未マージ。** 3 本とも Issue 案で、実装も試験も無い。`stream-json` の形は未確認。
 2. **draft が未実行。** 依頼文がどのくらいの本数のシナリオになるか、`unstated` がどのくらい出るか、契約のコマンドを `dispatcher` までにした形が受け入れられるかは、手順 5〜7 で初めて分かる。受け入れられない場合の代案: 契約のコマンドを 2 つの contract に分け、依頼を 2 つの change にする（その場合、1 つの Q にならない。窓口に戻す）。
 3. **依頼文は 1,082 語で、目安（900 語前後）より長く、較正の L1（1,614 語〜）より短い。** 「依頼を大きくしても」の問いには、まだ小さい側である。
 4. **学習汚染は 13 周目と同じ性質**（公開済みの変更の再現）。transcript で fetch・pip・git の経路は検査できるが、学習データの経路は検査できない。

@@ -174,9 +174,9 @@ A（pane id、runtime #240）と B（`spawn-prompt-step` の判定記録、#244 
 
 13 周目の契約は `... delegate-plan` までで、B の `spawn-prompt-step` を呼べない。コマンドを `python3 -m claude_org_runtime.cli dispatcher` までにし、argv の先頭にサブコマンドを書かせる。依存の lock は 13 周目と同一（sha256 `9d3778c3…7032`）で、13 周目の仮想環境をそのまま使う。工場の草稿役がこの形を受けるかは draft するまで分からない（runbook 手順 7 で確かめる）。
 
-### D14-4: 14 周目の前提として、工場に 2 つの変更を入れてから始める（提案）
+### D14-4: 14 周目の前提として、工場に 3 つの変更を入れてから始める（提案）
 
-(1) builder の transcript の保存。既存の設定・フラグでは足りない（`--output-format json` と `--no-session-persistence`、`$HOME` を隠す sandbox、`Task` に出力先が無い。`factory:src/adapter.ts:87, 38-44, 116-142`、`factory:src/roles.ts:301-306`、`factory:src/replicate.ts:136`）。stream-json を使い、状態ディレクトリへ書く変更案を [laps/lap-14/factory-issues.md](laps/lap-14/factory-issues.md) に書いた。これが無いと D13-8 の「半分の検査」を繰り返す。(2) 費用の定数（分類 $0.5 → $1、drafter $1 → $2、1 つの draft $10 → $25）。依頼が大きくなると 13 周目の上限に当たる見込みがあるため。どちらも外挿または未実装で、実装は窓口の判断。
+(1) builder の transcript の保存。既存の設定・フラグでは足りない（`--output-format json` と `--no-session-persistence`、`$HOME` を隠す sandbox、`Task` に出力先が無い。`factory:src/adapter.ts:87, 38-44, 116-142`、`factory:src/roles.ts:301-306`、`factory:src/replicate.ts:136`）。stream-json を使い、状態ディレクトリへ書く変更案を [laps/lap-14/factory-issues.md](laps/lap-14/factory-issues.md) に書いた。これが無いと D13-8 の「半分の検査」を繰り返す。(2) 費用の定数（分類 $0.5 → $1、drafter $1 → $2、1 つの draft $10 → $25）。依頼が大きくなると 13 周目の上限に当たる見込みがあるため。(3) 期待値の「無いこと」（`expect.jsonAbsent`）。今の `expect` は存在と部分一致だけで、`read` した不在のファイルは封筒から落ちるので、「古い record が消えている」を言えず、`{"files": {}}` は残っていても通る（`factory:src/scenario.ts:10, 181-196`、`factory:src/program.ts:170-176`）。これは Codex ゲートの指摘で足した。入れないなら B の record の不在は測らず、事前登録を直してから始める。(1)〜(3) とも外挿または未実装で、実装は窓口の判断。
 
 ### D14-5: 事前登録の予測は「90 % を割らない」に倒す（点 95 %、範囲 85〜100 %、割る確率 0.25）
 
