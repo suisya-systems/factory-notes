@@ -16,12 +16,18 @@
       "sets": 1
     }
   },
-  "approvedVersions": {},
+  "approvedVersions": {
+    "herdr-a-rep": "a2bf487b26d2446ba8bc89ef3f5e65e4b50dc7af785d9d33478205f048c6fd3e",
+    "herdr-a-run": "e6188f6199844e96f5160b678b41a7f90914bb430d40b50a2911e37eb15c6f34"
+  },
   "base": {
     "repo": "suisya-systems/claude-org-runtime",
     "commit": "003efefd537f1d7f67d47f19f654a3b451de298f",
     "commitSubject": "feat(terminal): support herdr 0.9.x (wire protocol 22) (#238)",
-    "isParentOf": ["b6ad40a3c4ea4ef636a931cf3f9c91f2ee597dd7", "263ff3fac0df20a1c062a0518ab7520e49e48c1e"],
+    "isParentOf": [
+      "b6ad40a3c4ea4ef636a931cf3f9c91f2ee597dd7",
+      "263ff3fac0df20a1c062a0518ab7520e49e48c1e"
+    ],
     "shipTarget": "disposable local repository: only 003efef and its ancestors, branch main, clean, no remote (runbook step 4); runtime's GitHub main is never pushed to",
     "paths": [
       "src/claude_org_runtime/dispatcher/runner.py:84-100",
@@ -42,11 +48,26 @@
   },
   "contract": {
     "file": "laps/lap-13/contract.json",
-    "command": ["python3", "-m", "claude_org_runtime.cli", "dispatcher", "delegate-plan"],
-    "pythonPath": ["src"],
+    "command": [
+      "python3",
+      "-m",
+      "claude_org_runtime.cli",
+      "dispatcher",
+      "delegate-plan"
+    ],
+    "pythonPath": [
+      "src"
+    ],
     "deps": "9d3778c3e9335fda0b852970cca76ee606df561c191071beb796363a3b9b7032",
     "lock": "laps/lap-13/requirements.lock",
-    "lockPackages": ["attrs==26.1.0", "jsonschema==4.26.0", "jsonschema-specifications==2025.9.1", "referencing==0.37.0", "rpds-py==0.30.0", "typing-extensions==4.16.0"],
+    "lockPackages": [
+      "attrs==26.1.0",
+      "jsonschema==4.26.0",
+      "jsonschema-specifications==2025.9.1",
+      "referencing==0.37.0",
+      "rpds-py==0.30.0",
+      "typing-extensions==4.16.0"
+    ],
     "python": "/usr/bin/python3 (3.10.12 on the preparation host)",
     "depsRoot": "/opt/factory-deps (root-owned after runbook step 3)",
     "dateNote": "the lock pins the versions current on 2026-10-27, not those of the base's date (2026-10-11); jsonschema>=4.18 is the only constraint runtime states"
@@ -62,7 +83,10 @@
     "q": {
       "metric": "Q = mean over the 8 builds of (scenarios passed / scenarios of herdr-a-rep that the build was scored on); a build that did not start counts 0 and is reported apart; flakes are left out as in flakeRule",
       "pointPct": 94,
-      "rangePct": [82, 100],
+      "rangePct": [
+        82,
+        100
+      ],
       "pBelow80": 0.15,
       "pAtCeiling": 0.45,
       "ceilingNote": "ceiling = Q >= 95 (calibrate-80's ceilingPct); the calibration found no opus Q below 90.6 on greenfield HTTP apps, and this request states every rule of the change (the table, the order, the digits-only case, the refusals)"
@@ -114,16 +138,39 @@
   "cost": {
     "lapCapUsd": 150,
     "lapCapNote": "the factory's own lap cap is a constant ($260, CAPS.lapCostUsd); $150 is held by the per-change caps below and by reading lap-ledger.jsonl after every step",
-    "perChangeCapsUsd": { "herdr-a-rep (replicate --max-cost)": 70, "herdr-a-run (run --max-cost)": 30, "herdr-a-measure (draft, constant)": 10 },
+    "perChangeCapsUsd": {
+      "herdr-a-rep (replicate --max-cost)": 70,
+      "herdr-a-run (run --max-cost)": 30,
+      "herdr-a-measure (draft, constant)": 10
+    },
     "stopLineUsd": 150,
-    "expectedUsd": { "low": 30, "high": 80, "basis": "runbook '費用の見積もり'; extrapolated from calibrate-80 l3-report unit costs and the number of characters shown; not measured" },
+    "expectedUsd": {
+      "low": 30,
+      "high": 80,
+      "basis": "runbook '費用の見積もり'; extrapolated from calibrate-80 l3-report unit costs and the number of characters shown; not measured"
+    },
     "caps": {
-      "confirmed": false,
-      "current": { "specDrafterCallUsd": 1, "scenarioDrafterCallUsd": 1, "classifierCallUsd": 0.5, "draftChangeUsd": 10 },
-      "proposedIfMeasuredAbove70Pct": { "specDrafterCallUsd": 2, "scenarioDrafterCallUsd": 2, "classifierCallUsd": 1, "draftChangeUsd": 15 },
-      "measuredPerCallUsd": { "specDrafter": null, "scenarioDrafter": null, "classifier": null },
+      "confirmed": true,
+      "current": {
+        "specDrafterCallUsd": 1,
+        "scenarioDrafterCallUsd": 1,
+        "classifierCallUsd": 0.5,
+        "draftChangeUsd": 10
+      },
+      "proposedIfMeasuredAbove70Pct": {
+        "specDrafterCallUsd": 2,
+        "scenarioDrafterCallUsd": 2,
+        "classifierCallUsd": 1,
+        "draftChangeUsd": 15
+      },
+      "measuredPerCallUsd": {
+        "specDrafter": 0.378,
+        "scenarioDrafter": 0.532,
+        "classifier": 0.334
+      },
       "rule": "after the measured draft (runbook step 6): a role whose measured call is at or above 70 % of its current cap gets the proposed value (a factory constant change, runbook step 7); below 70 % the current value stays. The values are fixed here and 'confirmed' set to true before the first main draft.",
-      "constants": "src/roles.ts draftTask maxCostUsd; src/classify.ts CLASSIFIER_BUDGET.maxCostUsd; src/limits.ts CAPS.maxCostUsd"
+      "constants": "src/roles.ts draftTask maxCostUsd; src/classify.ts CLASSIFIER_BUDGET.maxCostUsd; src/limits.ts CAPS.maxCostUsd",
+      "measuredNote": "runbook step 6, 2026-10-27, state-measure/lap-ledger.jsonl: max per call; draft herdr-a-measure total $6.387 (spec 2 calls avg 0.372, scenario 2 avg 0.514, classifier 14 avg 0.330). All below 70 % of current caps (classifier 67 %), so current caps stay."
     }
   },
   "errorsRule": "Errors rule (lap 8, restated): an expected value that contradicts the request, or a count or number that does not add up, is an expectation error; so is a run step whose expectation depends on a file or a template path the shown ranges do not give (the drafters could not know it). Each is listed in errors.json with a quote of the request; the whole scenario is left out of every build's pass fraction. Q is reported both raw and corrected; if they fall on different sides of 80 %, the verdict is 'undecided', not either.",
@@ -148,5 +195,11 @@
     "text": "Subject A is the reconstruction of change #242 / issue #240, which is public in suisya-systems/claude-org-runtime (merged 2026-10-11, released in v0.1.50). A model may have seen the fix, so Q can be an upper bound on what the builder derives from the request alone. The leak paths are: (1) model training data, not testable here; (2) the builder's model call shares the host network (factory README, 'The builder's model session is not cut off from the network'), so a builder could read the published fix; the run contract tells it to install nothing and use no network, but that is an instruction only; (3) the ship target holds no object after 003efef, so the repository cannot give it away. The request itself states the table and the rules (as issue #240 does), so the builder is not asked to rediscover them. No forward-looking subject is used in this lap (open runtime issue #21, ntfy, is the only one in the audit).",
     "check": "after the replicate, each build's transcript or workspace is searched for a fetch of github.com/suisya-systems/claude-org-runtime or for the commit ids b6ad40a / 263ff3f; any hit is reported and the build is listed apart (Q is given with and without it)."
   },
-  "amendments": []
+  "amendments": [
+    {
+      "date": "2026-10-27",
+      "before": "approval",
+      "what": "cost.caps confirmed from the measured draft; approvedVersions recorded. herdr-a-run has 2 scenarios in discrepancy class (b) (fixed-target-accepts-letter-pane, state-files-written-with-letter-pane), approved as is."
+    }
+  ]
 }
