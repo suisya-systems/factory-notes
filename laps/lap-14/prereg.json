@@ -94,10 +94,10 @@
     "repo": "suisya-systems/factory",
     "baseCommit": "fea10ee3a95d894bd45b104cd12255eddcedfcd9",
     "baseNote": "lap 13's commit (PR #67). Lap 14 runs on a later commit that contains the four changes of laps/lap-14/factory-issues.md (1 transcript, 2 cost constants, 3 expect.jsonAbsent, 4 run + fake service); implemented by a separate worker (owner decision 2026-10-27). The commit is filled in 'commit', and named in 'amendments', when all four are merged (runbook step 0); lap 14 does not start before.",
-    "commit": "47baf9e",
+    "commit": "11b8c41",
     "prerequisites": [
       "1. builder transcript saved under $FACTORY_HOME/transcripts/<change>/ (factory-issues.md section 1; the contamination check reads it)",
-      "2. cost constants: classifier 0.5 -> 1, draftTask 1 -> 2, CAPS.maxCostUsd 10 -> 40 (factory-issues.md section 2; owner's values, draft cap raised from 25 to 40 on 2026-10-27). Extrapolated: a draft of about 45 scenarios costs about 29 (range 20-40)",
+      "2. cost constants: classifier 0.5 -> 1, draftTask 1 -> 2 (scenario drafter raised to 5 on 2026-10-27, CAPS.scenarioDrafterUsd, factory PR #70; spec drafter stays 2), CAPS.maxCostUsd 10 -> 40 (factory-issues.md section 2; owner's values, draft cap raised from 25 to 40 on 2026-10-27). Extrapolated: a draft of about 45 scenarios costs about 29 (range 20-40)",
       "3. `expect.jsonAbsent` (factory-issues.md section 3): without it record-revocation (B) is not measured",
       "4. a run step and the fake external service in one scenario (factory-issues.md section 4): without it no scenario of part C can be written; the lap does not start without it"
     ]
@@ -236,7 +236,7 @@
       },
       "proposed": {
         "specDrafterCallUsd": 2,
-        "scenarioDrafterCallUsd": 2,
+        "scenarioDrafterCallUsd": 5,
         "classifierCallUsd": 1,
         "draftChangeUsd": 40
       },
@@ -245,8 +245,8 @@
         "scenarioDrafter": 0.532,
         "classifier": 0.334
       },
-      "rule": "the values are the owner's (decision 2026-10-27) and are factory constants (prerequisite 2), merged before the first draft. 'confirmed' is set to true at runbook step 0 when `$FACTORY/src` shows them. If a draft reaches the draft cap ($40), the lap stops (runbook step 5) and the owner decides.",
-      "constants": "src/roles.ts draftTask maxCostUsd; src/classify.ts CLASSIFIER_BUDGET.maxCostUsd; src/limits.ts CAPS.maxCostUsd"
+      "rule": "the values are the owner's (decisions 2026-10-27; the scenario-drafter per-call cap was raised from 2 to 5 after the run draft exceeded $2 in one call, factory PR #70, see 'amendments') and are factory constants (prerequisite 2), merged before the first draft (the $5 scenario-drafter cap before the redone drafts). 'confirmed' is set to true at runbook step 0 when `$FACTORY/src` shows them. If a draft reaches the draft cap ($40), the lap stops (runbook step 5) and the owner decides.",
+      "constants": "src/roles.ts draftTask maxCostUsd; src/classify.ts CLASSIFIER_BUDGET.maxCostUsd; src/limits.ts CAPS.maxCostUsd; src/limits.ts CAPS.scenarioDrafterUsd"
     },
     "perChangeCapsNote": "--max-cost includes the draft's spend (lap 13 runbook). 70 + 50 + probe ~1 = 121, inside 200; the owner may raise them if a draft costs more than extrapolated"
   },
@@ -296,6 +296,16 @@
       "date": "2026-10-27",
       "before": "draft",
       "what": "factory moved to 47baf9e (PR #69: interface.files may hold one {name} slot, drafter instructions state the interface/summary rules, rejection messages name the offending values). Reason: 8 draft attempts were rejected by the interface checks (spend $14.37). CI 297/297 with real bubblewrap."
+    },
+    {
+      "date": "2026-10-27",
+      "before": "draft",
+      "what": "factory moved to 11b8c41 (PR #70): scenario-drafter per-call cap $2 -> $5 (src/limits.ts CAPS.scenarioDrafterUsd, used by draftTask in src/roles.ts for role 'scenario-drafter'); spec drafter stays $2, CAPS.maxCostUsd stays $40. Owner decision. Reason: the run draft failed twice with `scenario-drafter failed: model reported an error (budget exceeded)`; one call cost $3.09 against the $2 cap. The rep draft made with the old cap (15 scenarios, version f715d6ea…) is discarded; both the rep and the run drafts are redone. Lap spend so far $32.53 (ledger total; the parts below are rounded: probe $0.29, spec drafter 19 calls $12.27, scenario drafter 8 calls $11.74, classifier 15 calls $8.22). The drafting script's per-change ledger check `ledger <change>` always returns $0 because lap-ledger.jsonl rows carry no change name, so the per-draft stop line ($35, runbook step 5) is read from the lap total (`ledger ''`) instead."
+    },
+    {
+      "date": "2026-10-28",
+      "before": "draft",
+      "what": "The lap continues on a different host. Its `/usr/bin/python3` is 3.12.3 (the lap 13 and 14 runbooks assumed 3.10.12). The lock (sha256 9d3778c3…7032, unchanged) contains cp312 wheels, so the dependency set was rebuilt from it with the same id at /opt/factory-deps/9d3778c3…7032 (rpds_py-0.30.0-cp312) and then made root-owned. The runtime under test therefore runs on Python 3.12 instead of 3.10. Ship target runtime-ship-14 re-created (HEAD 003efef, 149 commits, objects 263ff3f / b6ad40a / 410fd8a absent). probe-isolation re-run on this host: canaryFound=false, loginFound=false, modelOk=true, $0.35."
     }
   ]
 }
