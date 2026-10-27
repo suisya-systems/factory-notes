@@ -59,12 +59,12 @@ ls wheels    # 6 本。rpds_py-*-cp310-cp310-manylinux*_x86_64.whl を含む
 
 ## 流れ（人が順番に実行する）
 
-以下の変数を決める。パスは、HOME・`/tmp`・`/mnt`・`/run`・`/var/tmp` の中でよい（FACTORY_DEPS だけが外）。
+以下の変数を決める。**`SCR`（状態ディレクトリ `FACTORY_HOME` の置き場）は `$HOME` の下**にする（`src/sandbox.ts` の `protect` が、`$HOME` の下でないと起動を拒む）。`FACTORY_DEPS` だけが逆に、HOME・`/tmp`・`/mnt`・`/run`・`/var/tmp` の**外**。出荷先 `SHIP` と wheelhouse は `$HOME` の下でよい。
 
 ```
 NOTES=<factory-notes の checkout>          # laps/lap-13/ を持つ
 FACTORY=<suisya-systems/factory の checkout>  # fea10ee（PR #67 のマージ）以降
-SCR=<作業用ディレクトリ>                     # wheels/、出荷先、状態ディレクトリを置く
+SCR=<$HOME の下の作業用ディレクトリ>        # wheels/、出荷先、状態ディレクトリを置く
 SHIP=$SCR/runtime-ship
 export FACTORY_DEPS=/opt/factory-deps
 ```
