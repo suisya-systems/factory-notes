@@ -138,7 +138,7 @@
       "K=8 builds of one spec, one scenario set (herdr-a-rep own); calibration used 4 builds x 2 sets (own and cross) per request, and 2-3 sets in lap 8-12",
       "the scenario count is not fixed in advance (calibration: 11-15 per request); a small count makes each scenario worth more of Q",
       "the drafters and the classifier saw only the ranges above, the builder the whole repository; calibration drafters saw the whole (empty or small) app",
-      "request size is 487 words, below L0 (694-901 words); the calibration's finding that Q does not fall with size says nothing about a short request on a real repository",
+      "request size is 495 words, below L0 (694-901 words); the calibration's finding that Q does not fall with size says nothing about a short request on a real repository",
       "the builder is claude-opus-5-5 as in the calibration; the second model family is not used (no cross-family scenario drafter)",
       "dependencies are provided from a hash-pinned set outside the sandbox; calibration apps had none"
     ]
