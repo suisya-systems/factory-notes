@@ -25,8 +25,8 @@
     }
   },
   "approvedVersions": {
-    "runtime-abc-rep": null,
-    "runtime-abc-run": null,
+    "runtime-abc-rep": "9bbf7baf819c93546ca61c394f9986c8aaac7c1f835c7f5a3e2e2ba2508b55eb",
+    "runtime-abc-run": "b3a1bb03b87855a62e157e95d30709a214bf748616bc11aead39076479f20bc6",
     "note": "null until runbook step 7; committed before any replicate or run"
   },
   "base": {
@@ -306,6 +306,11 @@
       "date": "2026-10-28",
       "before": "draft",
       "what": "The lap continues on a different host. Its `/usr/bin/python3` is 3.12.3 (the lap 13 and 14 runbooks assumed 3.10.12). The lock (sha256 9d3778c3…7032, unchanged) contains cp312 wheels, so the dependency set was rebuilt from it with the same id at /opt/factory-deps/9d3778c3…7032 (rpds_py-0.30.0-cp312) and then made root-owned. The runtime under test therefore runs on Python 3.12 instead of 3.10. Ship target runtime-ship-14 re-created (HEAD 003efef, 149 commits, objects 263ff3f / b6ad40a / 410fd8a absent). probe-isolation re-run on this host: canaryFound=false, loginFound=false, modelOk=true, $0.35."
+    },
+    {
+      "date": "2026-10-28",
+      "before": "approval",
+      "what": "Entrance approval (runbook step 7), owner decision 2026-10-28. Both drafts redone on factory 11b8c41 with the $5 scenario-drafter cap. rep: 15 scenarios (A 3, A+B 1, B 5, C 6), draft spend $10.78 (spec drafter 1 call $0.63, scenario drafter 2 calls $1.98 max $1.06, classifier 15 calls $8.17 max $0.568). run: 15 scenarios (A 4, B 6, C 5), draft spend $13.83 (spec drafter 1 call $0.66, scenario drafter 2 calls $4.93 max $4.12, which would have failed under the old $2 cap, classifier 15 calls $8.23 max $0.573). No step-5 stop line hit. Lap spend so far $57.48 ($32.53 on the previous host + $24.95 on this host, probe included). Scenario count is 15 per draft against the expected 40-50 (cost.expectedUsd.basis); not caused by the cap (max scenario-drafter call $1.06 / $4.12, both under $5). Owner decision: proceed with 15. With 15 scenarios one miss is 93% and two misses 87%, so the 90% line turns on the second miss. Step-7 notes, candidates for errors.json (errorsRule): rep: decide-argv-carries-record-options (compares the order of --target/--task-id/--state-dir strictly while rep's spec lists that order as Undecided; the request lists them in this order but does not say \"in this order\"; owner chose to approve with this note rather than redraft); disabled-sink-without-topic-loads (errorsRule e: topic check when enabled is false); push-config-errors step 5 (max_body_chars 0 -> exit 2; weak: the request says \"at least 1\" but does not list out-of-range values as config errors). run: ntfy-failure-is-swallowed step 3 (assumes exactly one send after a 500; retry is \"not decided here\" in the request, errorsRule e); ntfy-config-errors step 5 (same max_body_chars 0 case, weak). Also noted: in both specs the not-decided points (auth, retry, per-kind filter, other sinks, tags) are written as \"Out of scope / Do not add\" rather than Undecided; consistent with the request's \"keep it simple, do not add features\", and no scenario tests them. Contradicts 0 in both; unstated 4 (rep) / 5 (run), most of them jsonAbsent steps the classifier cannot label M."
     }
   ]
 }
