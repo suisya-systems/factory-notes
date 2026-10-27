@@ -2,6 +2,8 @@
 
 Three changes to `claude-org-runtime`. The first two touch the same plan output, so they are written together; the third is a separate command.
 
+Files the commands read or write, by name (tests can create them under any names; these are the names used below): `task.json` (the task given to `--task-json`), `panes.json` (the layout given to `--panes-json`), `attention.json` (the attention config given to `--config`), `pending_decisions.json` (the pending-decision register that `attention scan` already reads from its `--state-dir`), and the decision record `worker-a.json`-style file of Part 2, one per target, named `<target>.json` in `dispatcher/spawn-prompt` under the state directory.
+
 ## Part 1. herdr pane ids past the ninth pane
 
 `claude-org-runtime dispatcher delegate-plan` plans where the next worker is spawned. It reads the panes of the current layout from the file given to `--panes-json` (a JSON list of panes, or an object `{"panes": [...]}`), and picks the pane to split.

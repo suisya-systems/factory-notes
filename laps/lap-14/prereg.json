@@ -286,6 +286,11 @@
       "date": "2026-10-27",
       "before": "approval",
       "what": "Request Part 2: the record path was written as a placeholder path with <...> (`<state-dir>/dispatcher/spawn-prompt/<target>.json`). The spec drafter copied it into the interface files and the factory rejected it (FILE_NAME in src/roles.ts:169 allows only [\\w.-] and '/'), twice for each draft (cost $7.36, no draft reached the classifier). Reworded to the same meaning without placeholders, with a concrete example. Word count changes by about +25."
+    },
+    {
+      "date": "2026-10-27",
+      "before": "approval",
+      "what": "The previous amendment did not fix the rejection. The rejected replies (runs/*/rejected-*.json, 6 attempts) show the real cause: the request never named the input files, so the spec drafter wrote descriptive names with spaces ('panes json', 'spawn prompt decision ...') in interface files / fields, which FILE_NAME and NAME reject. Added one paragraph naming the files (task.json, panes.json, attention.json, pending_decisions.json, and the per-target record). Meaning unchanged. Spend before this fix: $9.95 (spec drafter 12 calls, scenario drafter 2, probe 1)."
     }
   ]
 }
