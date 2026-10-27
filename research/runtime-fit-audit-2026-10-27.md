@@ -61,7 +61,7 @@
 ### 事実
 
 - runtime の PyPI 依存は `jsonschema>=4.18` の 1 つだけ。dev は `pytest`（`runtime:pyproject.toml:17-22`）。Python は `>=3.10`（同 :6）。CI は OS 3 種 × Python 3.10 / 3.11 / 3.12（`runtime:.github/workflows/test.yml:15-17`）。
-- `jsonschema` を import するのは `broker/residents.py` の 1 か所だけ（`runtime:src/claude_org_runtime/broker/residents.py:48, 441`）。ほかの src は標準ライブラリ。
+- `jsonschema` を直接 import するのは `broker/residents.py` の 1 か所だけ（`runtime:src/claude_org_runtime/broker/residents.py:48, 441`）。ただし**統一 CLI `claude-org-runtime` は起動時に必ず `jsonschema` を要る**。`cli.py` が `broker.launcher` を先に import し（`runtime:src/claude_org_runtime/cli.py:26`）、そこから `residents` に届く（`runtime:src/claude_org_runtime/broker/launcher.py:61`）。`jsonschema` が無いと、どのサブコマンドも走る前に `ModuleNotFoundError` になる（コードの読みで、実行はしていない）。`python -m claude_org_runtime.dispatcher.runner` のようなモジュール直接起動（`runtime:docs/cli.md:32`）は、`broker` を経由しないので要らない見込み（未確認）。
 - **core-harness は依存ではない。** README は「姉妹リポジトリ」と書く（`runtime:README.md:4-5, 116`）。テストには「core_harness はここでは依存ではないので、その規則を書き直した」とある（`runtime:tests/test_settings_generator.py:43-45`）。pyproject に出てこない。pin（版固定）も runtime のリポジトリには無い。
 - **herdr も Python の依存ではない。** PATH 上のバイナリの存在確認だけで、アダプタの操作は Unix ソケット経由（`runtime:src/claude_org_runtime/terminal/herdr.py:262-275`）。テストは偽のソケットサーバーで動く（`runtime:tests/terminal/test_herdr.py:58`、Windows では全体を skip :53）。版の境界は、herdr の wire protocol の表（`SUPPORTED_PROTOCOLS`、`protocol_for_version`）として runtime 側のコードに書かれている（`runtime:README.md:85-96`、`runtime:CHANGELOG.md:37-46, 76-85`）。
 - 条件付き skip が複数ある: 実機の claude が要るもの（`runtime:tests/test_env_template_carve_out.py:114`、`test_docker_push_deny.py:90`、`test_live_claude_mcp_env_expansion.py:28`）、bwrap が要るもの（`test_sandbox_symlink_deny.py:64, 79`）。factory の sandbox 内で bwrap は入れ子にできない見込み（未確認）なので、bwrap を要するテストは skip になる。
@@ -92,7 +92,7 @@ builder に「依存を入れるな、網を使うな」と言っているのは
 | 3. キャッシュの読み取り専用マウント | pip のキャッシュを mount し、sandbox 内で `pip install --no-index` | 事前配置と似るが、wheel の置き場だけ共有 | 1 本のシナリオごとにアプリを新しく起動する（`factory:src/scenario.ts:243`）ので、そのたびに install が走って遅い。書き込み先も要る。仮想環境を 1 回作る案 1 のほうが単純 | 不採用（案 1 に吸収） |
 | 4. 何もしない（builder が入れる） | 今の状態 | 手がかからない | 判定の sandbox から入れた物が見えず、そもそも動かない。動かせてしまった場合は再現性が無い | 不採用 |
 
-core-harness と herdr については、今回選んだ 3 題材（下の 4 節）は標準ライブラリだけで動き、どちらも要らない。pytest が要るのは builder が自分のテストを走らせたいとき（builder の sandbox にホストの Python と pytest が見えること）で、判定には要らない。
+core-harness と herdr については、今回選んだ 3 題材（下の 4 節）のコード自体は標準ライブラリだけで動き、どちらも要らない。ただし統一 CLI から呼ぶ限り `jsonschema`（と、その依存先）は必須なので、案 1 の仮想環境には `jsonschema` を必ず入れる。モジュール直接起動で呼ぶ手もあるが、利用者が使う入口（`claude-org-runtime`）を確かめる題材としては統一 CLI のほうが自然で、推奨は統一 CLI + 案 1。pytest が要るのは builder が自分のテストを走らせたいとき（builder の sandbox にホストの Python と pytest が見えること）で、判定には要らない。
 
 ## 3. base の扱い
 
@@ -130,21 +130,21 @@ core-harness と herdr については、今回選んだ 3 題材（下の 4 節
 
 - 入出力: `dispatcher delegate-plan --panes-json --task-json --state-dir --dry-run` の標準出力 JSON と終了コード 0 / 1 / 2（`runtime:docs/cli.md:14-35, 119-125`）。pane id は `w1:pA` `w1:p0` `w1:p11` のような形で、数字でなく herdr 独自の 32 文字表（`runtime:src/claude_org_runtime/dispatcher/runner.py:90-100`）。
 - 既存の pytest: `runtime:tests/test_dispatcher_runner.py`（107 件、`w1:p11` を含む）。
-- 依存: 標準ライブラリのみ。
+- 依存: 題材のコードは標準ライブラリのみ。統一 CLI から呼ぶ場合は `jsonschema` が要る（2 節）。
 - 依頼文の長さ: 300〜500 語で書ける（手前の commit のコードで、10 個目以降の id が拒否されるところが出発点）。
 
 **B. spawn-prompt-step が判定記録を書く**（v0.1.50、#244 / #245、`runtime:CHANGELOG.md:28-36`）
 
 - 入出力: 標準入力 `{"screen","previous_screen","elapsed_ms"}`、標準出力に次の操作、終了コード 0 / 10 / 2、`--target` を付けると `<state-dir>/dispatcher/spawn-prompt/<target>.json` を書く（`runtime:docs/cli.md:163-181`）。記録の形は「安定した契約」として文書化されている（同 :182 以降）。
 - 既存の pytest: `runtime:tests/test_spawn_prompt.py`（55 件）。
-- 依存: 標準ライブラリのみ。
+- 依存: 題材のコードは標準ライブラリのみ。統一 CLI から呼ぶ場合は `jsonschema` が要る（2 節）。
 - 注意: 記録に 30 秒の期限が付く（`runtime:CHANGELOG.md:33`）。時計に依存する確認は決定的にならない。期限の項目は「あること・形」までしか確かめられない。
 
 **C. attention の通知先に ntfy を足す**（open issue #21、2026-05-12）
 
 - 入出力: 設定 JSON で 1 つの通知先を有効にする。通知先の失敗は記録して握りつぶす。ネットワーク呼び出しのテストは mock にする（issue 本文の要件）。`attention scan --config --json`（`runtime:src/claude_org_runtime/attention/cli.py:368-395`）。
 - 既存の pytest: `runtime:tests/attention/`（`test_cli.py` が 34 件。ほかのファイルは数えていない）。
-- 依存: 標準ライブラリ（`urllib`）のはず。
+- 依存: 題材のコードは標準ライブラリ（`urllib`）のはず。統一 CLI から呼ぶ場合は `jsonschema` が要る（2 節）。
 - 注意: 本文は Slack / Discord / ntfy / Gotify / Pushover を列挙している。1 つに絞る前提で、送る本文の形は issue が決めていない（`## Undecided` に多く入る）。外部サービスの偽物（`factory:README.md:38`）で相手側を再現できるが、**手が終了コード・ファイルの run の手と、偽サービスの操作の手が同じシナリオで組めるかは未確認**。
 
 ### 現状の factory で通せるか
@@ -211,7 +211,7 @@ l3-report の合わせた依頼（L0〜L3）の語数は約 700〜3,600 語（`n
 
 | 選択肢 | 内容 |
 |---|---|
-| **A. herdr の pane id（推奨）** | 標準ライブラリのみ、時計なし、ファイル入力と JSON 出力、既存の pytest が多い。工場の壁が手順・取り込み・replicate の 3 つに絞れる。規模を上げるのは後で B・C を合わせる |
+| **A. herdr の pane id（推奨）** | 題材のコードは標準ライブラリのみ（統一 CLI 経由なら `jsonschema` は必要）、時計なし、ファイル入力と JSON 出力、既存の pytest が多い。工場の壁が手順・取り込み・replicate の 3 つに絞れる。規模を上げるのは後で B・C を合わせる |
 | B. spawn-prompt-step | 標準入力と判定記録を試せるが、期限の確認が限られる |
 | C. ntfy の通知先 | 前向きの題材（汚染が小さい）だが、Undecided が多く、偽サービスとの組み合わせが未検証 |
 
