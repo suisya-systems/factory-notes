@@ -2,7 +2,7 @@
 
 Three changes to `claude-org-runtime`. The first two touch the same plan output, so they are written together; the third is a separate command.
 
-Files the commands read or write, by name (tests can create them under any names; these are the names used below): `task.json` (the task given to `--task-json`), `panes.json` (the layout given to `--panes-json`), `attention.json` (the attention config given to `--config`), `pending_decisions.json` (the pending-decision register that `attention scan` already reads from its `--state-dir`), and the decision record `worker-a.json`-style file of Part 2, one per target, named `<target>.json` in `dispatcher/spawn-prompt` under the state directory.
+Files the commands read or write, by name (tests can create them under any names; these are the names used below): `task.json` (the task given to `--task-json`), `panes.json` (the layout given to `--panes-json`), `attention.json` (the attention config given to `--config`), `pending_decisions.json` (the pending-decision register that `attention scan` already reads from its `--state-dir`), and the decision record of Part 2, one file per target in `dispatcher/spawn-prompt` under the state directory, named after the target (for the target `worker-a`, `worker-a.json`).
 
 ## Part 1. herdr pane ids past the ninth pane
 
